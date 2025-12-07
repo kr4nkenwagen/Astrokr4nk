@@ -4,6 +4,7 @@ from constants import LEVEL_LIMIT, \
     PLAYER_FIRE_RATE, \
     PLAYER_MAX_SPEED, \
     PLAYER_RADIUS, \
+    PLAYER_SHIELD_RIPPLE_MAX, \
     PLAYER_TURN_SPEED, \
     SCREEN_ACCELERATION, \
     SCREEN_DEACCELERATION, \
@@ -14,6 +15,7 @@ from entity import entity
 from player_polygon import player_polygon
 from player_shot import player_shot
 from player_thurst_representation import player_thrust_representation
+from player_shield import player_shield
 from pygame import Vector2, \
     K_a, \
     K_d, \
@@ -24,13 +26,14 @@ from pygame import Vector2, \
 
 class player(entity):
     thrust_representation = None
+    shield_representation = None
     camera_offset = Vector2(0, 0)
     player_fire_rate_counter = 0
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.polygon = player_polygon()
-        self.collideable = True
+        #self.collideable = True
         self.rotation = 180
         self.score = 0
         self.level = 0
@@ -81,6 +84,7 @@ class player(entity):
                 player_thrust_representation(self.position.x,
                                              self.position.y,
                                              10))
+            self.shield_representation = self.game.ent_manager.add_entity(player_shield( self.position.x, self.position.y))
             self.thrust_representation.parent = self
         keys = key.get_pressed()
         self.rotate(self.game.dt, keys)
@@ -91,6 +95,9 @@ class player(entity):
         if self.score > LEVEL_LIMIT:
             self.score = 0
             self.level += 1
+        if self.shield_representation != None:
+            self.shield_representation.position.x = self.position.x
+            self.shield_representation.position.y = self.position.y
 
     def shoot(self):
         if self.player_fire_rate_counter > 0:

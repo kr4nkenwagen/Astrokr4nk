@@ -1,6 +1,7 @@
 from entity import entity
 from ui_score import ui_score
 from ui_level import ui_level
+from ui_shield import ui_shield
 
 
 class ui(entity):
@@ -12,4 +13,5 @@ class ui(entity):
         if self.initialized is False:
             self.game.ent_manager.add_entity(ui_score())
             self.game.ent_manager.add_entity(ui_level())
+            self.game.ent_manager.add_entity(ui_shield())
             self.initialized = True

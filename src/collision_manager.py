@@ -1,3 +1,4 @@
+from constants import DEBUG_ENABLED
 from pygame import Vector2, \
     draw
 from math import degrees, \
@@ -18,10 +19,11 @@ class collision_manager():
                 while sec_ent is not None:
                     if sec_ent.collideable and len(sec_ent.polygon.points) > 0:
                         dist = cur_ent.position.distance_to(sec_ent.position)
-                        radius = (cur_ent.radius + sec_ent.radius) / 2
+                        radius = cur_ent.radius + sec_ent.radius
                         if dist < radius:
-                            if self.polygons_collide(cur_ent.polygon.points,
-                                                     sec_ent.polygon.points):
+                            collides, _, _= self.polygons_collide(cur_ent.polygon.points,
+                                                     sec_ent.polygon.points)
+                            if collides:
                                 if sec_ent.id not in cur_ent.has_collided_with:
                                     collision_point = self.get_collision_point(
                                         cur_ent.polygon.points,
@@ -47,33 +49,48 @@ class collision_manager():
                     sec_ent = sec_ent.next
             cur_ent = cur_ent.next
 
+
     def polygons_collide(self, pol1, pol2):
+        min_overlap = float('inf')
+        smallest_axis = None
         for polygon in (pol1, pol2):
-            for i1 in range(len(polygon)):
-                i2 = (i1 + 1) % len(polygon)
+            count = len(polygon)
+            for i1 in range(count):
+                i2 = (i1 + 1) % count
                 edge = polygon[i2] - polygon[i1]
-                if edge.length_squared() == 0:
+                if edge.length_squared() < 1e-12:
                     continue
-                axis = Vector2(-edge.y, edge.x).normalize()
+                axis = Vector2(-edge.y, edge.x)
+                axis.normalize_ip()
                 min_a, max_a = self.polygon_projection(pol1, axis)
                 min_b, max_b = self.polygon_projection(pol2, axis)
                 if max_a < min_b or max_b < min_a:
-                    return False
-        return True
+                    return False, None, 0  # NO collision
+                overlap = min(max_a, max_b) - max(min_a, min_b)
+                if overlap < min_overlap:
+                    min_overlap = overlap
+                    smallest_axis = axis
+        center1 = sum(pol1, Vector2()) / len(pol1)
+        center2 = sum(pol2, Vector2()) / len(pol2)
+        if (center2 - center1).dot(smallest_axis) < 0:
+            smallest_axis = -smallest_axis
+        return True, smallest_axis, min_overlap
+
 
     def polygon_projection(self, pol, axis):
         dots = [point.dot(axis) for point in pol]
         return min(dots), max(dots)
 
     def get_collision_point(self, pol1, pol2):
-        min_dist = float('inf')
+        best = None
+        best_dist = float('inf')
         for p1 in pol1:
             for p2 in pol2:
-                dist = p1.distance_to(p2)
-                if dist < min_dist:
-                    min_dist = dist
-                    return Vector2(p1.x / p2.x, p1.y / p2.y)
-        return Vector2(0, 0)
+                d = p1.distance_to(p2)
+                if d < best_dist:
+                    best_dist = d
+                    best = (p1 + p2) * 0.5  # midpoint
+        return best if best is not None else Vector2()
 
     def shift_points(self, points, shift, rotation, center):
         transformed_points = []
@@ -84,36 +101,49 @@ class collision_manager():
             transformed_points.append(new_p)
         return transformed_points
 
+
     def check_velocity_position(self, entity):
         if len(entity.polygon.points) == 0:
             return []
-        cur_ent = entity.next
-        ops = []
-        while cur_ent is not None:
-            if cur_ent != entity and \
-               cur_ent.use_physics and \
-               len(cur_ent.polygon.points) > 0:
-                dist = (
-                    cur_ent.position + cur_ent.velocity).distance_to(
-                    entity.position + entity.velocity)
-                radius = cur_ent.radius + entity.radius
-                if dist < radius:
-                    p1 = self.shift_points(
-                        cur_ent.polygon.points,
-                        cur_ent.velocity * self.game.dt,
-                        cur_ent.angular_velocity * self.game.dt,
-                        cur_ent.position)
-                    p2 = self.shift_points(
-                        entity.polygon.points,
-                        entity.velocity * self.game.dt,
-                        entity.angular_velocity * self.game.dt,
-                        entity.position)
-                    draw.polygon(self.game.screen, "red", p1, 10)
-                    draw.polygon(self.game.screen, "blue", p2, 10)
-                    if self.polygons_collide(p1, p2):
-                        ops.append(cur_ent)
-            cur_ent = cur_ent.next
-        return ops
+        dt = self.game.dt
+        results = []
+        ent_future_poly = self.shift_points(
+            entity.polygon.points,
+            entity.velocity * dt,
+            entity.angular_velocity * dt,
+            entity.position
+        )
+        cur = entity.next
+        while cur is not None:
+            if cur.use_physics and len(cur.polygon.points) > 0:
+                pos1 = cur.position + cur.velocity * dt
+                pos2 = entity.position + entity.velocity * dt
+                if pos1.distance_to(pos2) < (cur.radius + entity.radius):
+                    cur_future_poly = self.shift_points(
+                        cur.polygon.points,
+                        cur.velocity * dt,
+                        cur.angular_velocity * dt,
+                        cur.position
+                    )
+                    if DEBUG_ENABLED:
+                        draw.polygon(self.game.screen, "red", cur_future_poly, 2)
+                        draw.polygon(self.game.screen, "blue", ent_future_poly, 2)
+                    collides, normal, depth = self.polygons_collide(
+                        cur_future_poly, ent_future_poly
+                    )
+                    if collides:
+                        contact_point = self.get_collision_point(
+                            cur_future_poly, ent_future_poly
+                        )
+                        results.append({
+                            "other": cur,
+                            "normal": normal,
+                            "penetration": depth,
+                            "point": contact_point
+                        })
+            cur = cur.next
+
+        return results
 
     def polygon_line(self, position, rotation, length, thickness):
         half_length = length / 2

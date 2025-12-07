@@ -3,7 +3,6 @@ from constants import BACKGROUND_COLOR, \
 from pygame import draw as render, \
     display
 
-
 class render_manager():
     game = None
     render_queue = []
