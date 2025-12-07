@@ -2,7 +2,6 @@ import game
 from pygame import sprite, \
     Vector2
 
-
 class entity(sprite.Sprite):
     def __init__(self, x, y, radius):
         self.position = Vector2(x, y)
@@ -11,6 +10,7 @@ class entity(sprite.Sprite):
         self.parent = None
         self.collideable = False
         self.has_collided_with = set()
+        self.has_physics_collided_with = []
         self.id = 0
         self.rotation = 0
         self.position = Vector2(x, y)
@@ -40,3 +40,7 @@ class entity(sprite.Sprite):
 
     def on_destroy(self):
         pass
+
+    def on_physics_enter(self, entity):
+        pass
+
