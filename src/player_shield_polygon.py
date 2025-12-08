@@ -1,7 +1,8 @@
 from constants import PLAYER_SHIELD_COLOR, \
     PLAYER_SHIELD_RIPPLE_RESET_TIME, \
     PLAYER_SHIELD_SEGMENTS, \
-    PLAYER_SHIELD_THICKNESS
+    PLAYER_SHIELD_THICKNESS, \
+    PLAYER_SHIELD_RIPPLE
 from pygame import Vector2
 from polygon import polygon
 import math
@@ -21,10 +22,15 @@ class player_shield_polygon(polygon):
         base_points = []
         for i in range(PLAYER_SHIELD_SEGMENTS):
             angle = (i / PLAYER_SHIELD_SEGMENTS) * 2 * math.pi
-            x = position.x + math.cos(angle) * radius
-            y = position.y + math.sin(angle) * radius
+            x = position.x + math.cos(angle) * radius + randint(-PLAYER_SHIELD_RIPPLE, PLAYER_SHIELD_RIPPLE)
+            y = position.y + math.sin(angle) * radius + randint(-PLAYER_SHIELD_RIPPLE, PLAYER_SHIELD_RIPPLE)
             base_points.append(Vector2(x, y))
         points = []
+        filtered_ripple_direction = []
+        for p in self.ripple_direction:
+            if all(p.distance_to(f) >= 1 for f in filtered_ripple_direction):
+                filtered_ripple_direction.append(p)
+        self.ripple_direction = filtered_ripple_direction
         for point in base_points:
             offset = Vector2(0, 0)
             for dir_vector in unique_vectors:
