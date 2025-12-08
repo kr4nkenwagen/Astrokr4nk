@@ -48,9 +48,15 @@ class entity_manager:
                         if other not in curr_ent.has_physics_collided_with:
                             curr_ent.on_physics_enter(other)
                             curr_ent.has_physics_collided_with.append(other)
-                    curr_ent.has_physics_collided_with = [
-                        e for e in curr_ent.has_physics_collided_with if e in current_hit_entities
-                    ]
+                        else:
+                            curr_ent.on_physics(other)
+                    new_list = []
+                    for e in curr_ent.has_physics_collided_with:
+                        if e in current_hit_entities:
+                            new_list.append(e)
+                        else:
+                            curr_ent.on_physics_exit(e)
+                    curr_ent.has_physics_collided_with = new_list
                     curr_ent.position += curr_ent.velocity * dt
                     curr_ent.rotation += curr_ent.angular_velocity * dt
             curr_ent = curr_ent.next

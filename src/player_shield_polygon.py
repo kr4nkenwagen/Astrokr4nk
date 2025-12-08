@@ -26,6 +26,11 @@ class player_shield_polygon(polygon):
             y = position.y + math.sin(angle) * radius + randint(-PLAYER_SHIELD_RIPPLE, PLAYER_SHIELD_RIPPLE)
             base_points.append(Vector2(x, y))
         points = []
+        filtered_ripple_direction = []
+        for p in self.ripple_direction:
+            if all(p.distance_to(f) >= 1 for f in filtered_ripple_direction):
+                filtered_ripple_direction.append(p)
+        self.ripple_direction = filtered_ripple_direction
         for point in base_points:
             offset = Vector2(0, 0)
             for dir_vector in unique_vectors:

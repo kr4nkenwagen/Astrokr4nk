@@ -43,3 +43,10 @@ class entity(sprite.Sprite):
     def on_physics_enter(self, entity):
         pass
 
+    def on_physics(self, entity):
+        pass
+
+    def on_physics_exit(self, entity):
+        pass
+
+

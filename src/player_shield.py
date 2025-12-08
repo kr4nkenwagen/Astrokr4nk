@@ -17,6 +17,7 @@ class player_shield(entity):
         self.first_frame = True
         self.player = None
         self.value = PLAYER_SHIELD_MAX
+        self.collision_list = set()
 
     def update(self):
         if self.first_frame:
@@ -37,11 +38,22 @@ class player_shield(entity):
 
     def on_physics_enter(self, entity):
         if self.value > 0:
+            if not entity.id in self.collision_list:
+                pass
+                #self.collision_list.add([entity.id, 0])
             self.value -= 10
             direction = entity.position - self.position
             direction = Vector2.normalize(direction)
             self.polygon.ripple_direction.append(direction)
             self.polygon.ripple = PLAYER_SHIELD_RIPPLE_MAX
+
+    def on_physics(self, entity):
+        if self.value > 0:
+            direction = entity.position - self.position
+            direction = Vector2.normalize(direction)
+            self.polygon.ripple_direction.append(direction)
+            self.polygon.ripple = PLAYER_SHIELD_RIPPLE_MAX
+
 
 
 
