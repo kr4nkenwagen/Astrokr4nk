@@ -23,10 +23,12 @@ class player_shield(entity):
             self.player = self.game.ent_manager.get_entity("player")
             self.first_frame = False
         self.velocity = self.player.velocity
+        if self.value == 0:
+            self.polygon.show = False
 
     def on_physics_enter(self, entity):
         if self.value > 0:
-            #self.value -= 10
+            self.value -= 10
             direction = entity.position - self.position
             direction = Vector2.normalize(direction)
             self.polygon.ripple_direction.append(direction)
