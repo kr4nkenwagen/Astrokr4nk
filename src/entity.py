@@ -23,7 +23,6 @@ class entity(sprite.Sprite):
         self.destroyed = False
 
     def update(self):
-
         pass
 
     def draw(self):

@@ -4,7 +4,6 @@ from constants import LEVEL_LIMIT, \
     PLAYER_FIRE_RATE, \
     PLAYER_MAX_SPEED, \
     PLAYER_RADIUS, \
-    PLAYER_SHIELD_RIPPLE_MAX, \
     PLAYER_TURN_SPEED, \
     SCREEN_ACCELERATION, \
     SCREEN_DEACCELERATION, \
@@ -118,6 +117,7 @@ class player(entity):
         self.game.game_paused = True
         self.player_dead = True
         self.thrust_representation.polygon.player_dead = True
+        self.polygon.flash = True
         print("Player collided with " + str(entity.id))
 
     def on_collision(self, entity):
