@@ -66,3 +66,4 @@ class game():
 
     def end(self):
         print("game closing")
+        self.game_paused = False

@@ -1,4 +1,5 @@
 from entity import entity
+from ui_game_over import ui_game_over
 from ui_score import ui_score
 from ui_level import ui_level
 from ui_shield import ui_shield
@@ -14,4 +15,5 @@ class ui(entity):
             self.game.ent_manager.add_entity(ui_score())
             self.game.ent_manager.add_entity(ui_level())
             self.game.ent_manager.add_entity(ui_shield())
+            self.game.ent_manager.add_entity(ui_game_over())
             self.initialized = True

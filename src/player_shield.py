@@ -25,6 +25,15 @@ class player_shield(entity):
         self.velocity = self.player.velocity
         if self.value == 0:
             self.polygon.show = False
+            self.collideable = False
+            self.use_physics = False
+            self.player.collideable = True
+        else:
+            self.polygon.show = True
+            self.collideable = True
+            self.use_physics = True
+            self.player.collideable = False
+
 
     def on_physics_enter(self, entity):
         if self.value > 0:

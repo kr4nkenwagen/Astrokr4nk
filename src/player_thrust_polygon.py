@@ -13,12 +13,13 @@ class player_thrust_polygon(polygon):
         super().__init__()
         self.timer = PLAYER_REAR_THRUST_FLAME_UPDATE_RATE
         self.flame = []
+        self.player_dead = False
 
     def calc(self, position, rotation, radius, dt):
         self.color = PLAYER_REAR_THRUST_COLOR
         self.thickness = PLAYER_REAR_THRUST_THICKNESS
         self.timer += dt
-        if self.timer > PLAYER_REAR_THRUST_FLAME_UPDATE_RATE:
+        if self.timer > PLAYER_REAR_THRUST_FLAME_UPDATE_RATE and not self.player_dead:
             self.randomize_flame()
             self.timer = 0
         flame_offset = Vector2(0, -PLAYER_RADIUS + 1)
@@ -33,7 +34,7 @@ class player_thrust_polygon(polygon):
         flame_unifier = -flame_width // 2
         self.flame = []
         self.flame.append(Vector2(-flame_width, 0))
-        for i in range(num_points):
+        for _ in range(num_points):
             spread = randint(0, flame_width // num_points)
             depth = randint(5, flame_length)
             self.flame.append(Vector2(flame_unifier + spread, -depth))

@@ -29,6 +29,7 @@ class player(entity):
     shield_representation = None
     camera_offset = Vector2(0, 0)
     player_fire_rate_counter = 0
+    player_dead = False
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
@@ -114,6 +115,9 @@ class player(entity):
                 self.player_fire_rate_counter = 0
 
     def on_collision_enter(self, entity, collision_point):
+        self.game.game_paused = True
+        self.player_dead = True
+        self.thrust_representation.polygon.player_dead = True
         print("Player collided with " + str(entity.id))
 
     def on_collision(self, entity):
