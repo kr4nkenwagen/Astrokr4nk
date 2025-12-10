@@ -63,9 +63,7 @@ class ui_shield(entity):
             self.damage_shake_timer -= self.game.dt
             t = self.damage_shake_timer / UI_SHIELD_HIT_SHAKE_TIME
             if t > 0:
-                self.color = Color(UI_COLOR_RED).lerp(UI_COLOR, t)
-            else:
-                self.color = Color(UI_COLOR)
+                self.color = Color(UI_COLOR).lerp(UI_COLOR_RED, t)
             shake_strength = UI_SHIELD_HIT_SHAKE_MULTIPLIER * t
             shake_x = random.uniform(-shake_strength, shake_strength)
             shake_y = random.uniform(-shake_strength, shake_strength)
