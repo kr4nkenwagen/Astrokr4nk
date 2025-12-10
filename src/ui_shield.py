@@ -46,6 +46,7 @@ class ui_shield(entity):
         self.value.x = base_x
         self.value.y = base_y
         if self.shield.value > 0:
+            self.color = Color(UI_COLOR)
             self.value.width = (self.shield.value / PLAYER_SHIELD_MAX) * self.frame.width
         else:
             self.color = Color(UI_DISABLED_COLOR)
