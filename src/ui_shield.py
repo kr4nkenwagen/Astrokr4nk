@@ -2,6 +2,7 @@ from constants import PLAYER_SHIELD_MAX, \
     PLAYER_SHIELD_RADIUS, \
     PLAYER_SHIELD_RECHARGE_TIME, \
     UI_COLOR, \
+    UI_DISABLED_COLOR, \
     UI_SHIELD_CHARGE_SHAKE_MULTIPLIER, \
     UI_SHIELD_HIT_SHAKE_MULTIPLIER
 from entity import entity
@@ -21,6 +22,7 @@ class ui_shield(entity):
         self.prev_shield_value = None
         self.damage_shake_timer = 0
         self.damage_shake_duration = 0.3   # seconds
+        self.color = UI_COLOR
 
     def update(self):
         if self.shield is None:
@@ -42,7 +44,9 @@ class ui_shield(entity):
         self.value.y = base_y
         if self.shield.value > 0:
             self.value.width = (self.shield.value / PLAYER_SHIELD_MAX) * self.frame.width
+            self.color = UI_COLOR
         else:
+            self.color = UI_DISABLED_COLOR
             recharge_progress = self.shield.recharge_timer / PLAYER_SHIELD_RECHARGE_TIME
             self.value.width = recharge_progress * self.frame.width
             shake_amount = UI_SHIELD_CHARGE_SHAKE_MULTIPLIER * recharge_progress
@@ -68,7 +72,7 @@ class ui_shield(entity):
         if self.shield.player.player_dead:
             return
         render.polygon(self.game.screen,
-                       UI_COLOR,
+                       self.color,
                        [
                            Vector2(self.frame.x, self.frame.y),
                            Vector2(self.frame.x + self.frame.width,
@@ -80,7 +84,7 @@ class ui_shield(entity):
                        ],
                        1)
         render.polygon(self.game.screen,
-                       UI_COLOR,
+                       self.color,
                        [
                            Vector2(self.value.x, self.value.y),
                            Vector2(self.value.x + self.value.width,
