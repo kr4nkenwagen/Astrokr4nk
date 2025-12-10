@@ -5,7 +5,8 @@ from constants import PLAYER_SHIELD_MAX, \
     UI_COLOR_RED, \
     UI_DISABLED_COLOR, \
     UI_SHIELD_CHARGE_SHAKE_MULTIPLIER, \
-    UI_SHIELD_HIT_SHAKE_MULTIPLIER
+    UI_SHIELD_HIT_SHAKE_MULTIPLIER, \
+    UI_SHIELD_HIT_SHAKE_TIME
 from entity import entity
 from pygame import Vector2, \
     Rect, \
@@ -23,7 +24,6 @@ class ui_shield(entity):
         self.value = Rect(0, 0, 0, 5)
         self.prev_shield_value = None
         self.damage_shake_timer = 0
-        self.damage_shake_duration = 0.3   # seconds
         self.color = Color(UI_COLOR)
 
     def update(self):
@@ -36,7 +36,7 @@ class ui_shield(entity):
             self.prev_shield_value = self.shield.value
         else:
             if self.shield.value < self.prev_shield_value:
-                self.damage_shake_timer = self.damage_shake_duration
+                self.damage_shake_timer = UI_SHIELD_HIT_SHAKE_TIME
                 self.color = Color(UI_COLOR_RED)
             self.prev_shield_value = self.shield.value
         base_x = self.shield.position.x - PLAYER_SHIELD_RADIUS
@@ -61,7 +61,7 @@ class ui_shield(entity):
             shake_x = shake_y = 0
         if self.damage_shake_timer > 0:
             self.damage_shake_timer -= self.game.dt
-            t = self.damage_shake_timer / self.damage_shake_duration
+            t = self.damage_shake_timer / UI_SHIELD_HIT_SHAKE_TIME
             if t > 0:
                 self.color = Color(UI_COLOR_RED).lerp(UI_COLOR, t)
             else:
