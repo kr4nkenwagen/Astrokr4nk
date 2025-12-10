@@ -28,6 +28,8 @@ class player_shield(entity):
             self.player = self.game.ent_manager.get_entity("player")
         self.velocity = self.player.velocity
         self.position = self.player.position
+        if self.value < 0:
+            self.valu = 0
         if self.value == 0:
             if self.radius <= PLAYER_RADIUS:
                 self.polygon.show = False
