@@ -13,8 +13,8 @@ class ui_level(entity):
     def __init__(self):
         super().__init__(0, 0, 0)
         self.radius = 30
-        self.position = Vector2(UI_OFFSET, SCREEN_HEIGHT -
-                                ((UI_OFFSET * 2) + UI_SCORE_HEIGHT))
+        self.position = Vector2(UI_OFFSET * 2.5, SCREEN_HEIGHT -
+                                ((UI_OFFSET * 3) + UI_SCORE_HEIGHT))
         self.font = Font(FONT_BOLD, FONT_SIZE)
         self.text = None
         self.player = None
@@ -29,7 +29,7 @@ class ui_level(entity):
                                      UI_COLOR)
 
     def draw(self):
-        if self.text is None:
+        if self.text is None or self.player.player_dead:
             return
         self.game.screen.blit(self.text,
                               self.position)
