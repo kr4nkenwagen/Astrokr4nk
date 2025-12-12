@@ -62,6 +62,7 @@ class asteroid(entity):
         if not self.destroyed_by_player:
             return
         self.player.score += SCORE_MULTIPLIER / self.max_radius
+        self.game.ent_manager.get_entity("ui_score_numbers").create_score_text(SCORE_MULTIPLIER / self.max_radius, self.position)
         if self.max_radius < ASTEROID_MIN_RADIUS + ASTEROID_MIN_RADIUS_SPAN:
             return
         child_count = max(2, self.max_radius // ASTEROID_CHILD_DIVIDER)

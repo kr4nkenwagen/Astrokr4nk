@@ -25,6 +25,7 @@ class ui_shield(entity):
         self.prev_shield_value = None
         self.damage_shake_timer = 0
         self.color = Color(UI_COLOR)
+        self.is_ui = True
 
     def update(self):
         if self.shield is None:

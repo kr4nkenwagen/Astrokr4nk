@@ -1,5 +1,8 @@
-from constants import BACKGROUND_COLOR, \
-    DEBUG_ENABLED
+from constants import (
+    BACKGROUND_COLOR,
+    DEBUG_ENABLED,
+    RENDER_UI
+)
 from pygame import draw as render, \
     display
 
@@ -21,5 +24,7 @@ class render_manager():
             if pol.show:
                 render.polygon(
                     self.game.screen, pol.color, pol.points, pol.thickness)
+        if RENDER_UI:
+            self.game.ent_manager.draw_ui()
         display.flip()
         self.render_queue.clear()

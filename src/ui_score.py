@@ -1,54 +1,93 @@
-from constants import LEVEL_LIMIT, \
-    SCREEN_HEIGHT, \
-    SCREEN_WIDTH, \
-    UI_OFFSET, \
-    UI_SCORE_HEIGHT, \
-    UI_SCORE_WIDTH, \
-    UI_COLOR
+
+from constants import (
+    SCREEN_HEIGHT,
+    SCREEN_WIDTH,
+    UI_SCORE_LEVEL_UP_SHAKE_AMOUNT,
+    UI_OFFSET,
+    UI_SCORE_BAR_BOUNCE_DURATION,
+    UI_SCORE_FILL_SPEED,
+    UI_SCORE_HEIGHT,
+    UI_SCORE_LEVEL_UP_SHAKE_TIMER,
+    UI_SCORE_WIDTH,
+    UI_COLOR,
+    LEVEL_LIMIT,
+    UI_SCORE_BAR_ZOOM_MAX)
 from entity import entity
-from pygame import draw as render, \
-    Rect, \
-    Vector2
+from pygame import draw as render, Rect, Vector2
+import math
 
 
 class ui_score(entity):
     def __init__(self):
         super().__init__(0, 0, 0)
-        self.frame = Rect((SCREEN_WIDTH // 2) - UI_SCORE_WIDTH // 2,
-                          SCREEN_HEIGHT - UI_OFFSET + UI_SCORE_HEIGHT,
-                          UI_SCORE_WIDTH, UI_SCORE_HEIGHT)
-        self.value_rect = Rect(
-            self.frame.x, self.frame.y, 0, self.frame.height)
+
+        self.frame = Rect(
+            (SCREEN_WIDTH // 2) - UI_SCORE_WIDTH // 2,
+            SCREEN_HEIGHT - UI_OFFSET - UI_SCORE_HEIGHT,
+            UI_SCORE_WIDTH,
+            UI_SCORE_HEIGHT
+        )
+        self.fill_width = 0.0
+        self.target_fill = 0.0
         self.player = None
-        self.value = 0
-        self.player_score_position = Vector2(UI_OFFSET, self.frame.y)
+        self.last_level = 0
+        self.pulse_timer = 0.0
+        self.level_up_timer = 0.0
+        self.level_up_shake = 0.0
+        self.zoom = Vector2(0 ,0)
+        self.level_up_bounce_duration = UI_SCORE_BAR_BOUNCE_DURATION
 
     def update(self):
+        dt = self.game.dt
         if self.player is None:
             self.player = self.game.ent_manager.get_entity("player")
-        self.player_score_position.x = \
-            UI_OFFSET + \
-            ((self.player.score / LEVEL_LIMIT) * UI_SCORE_WIDTH)
+            if self.player is None:
+                return
+            self.last_level = self.player.level
+        score_ratio = min(self.player.score / LEVEL_LIMIT, 1.0)
+        self.target_fill = score_ratio * UI_SCORE_WIDTH
+        diff = self.target_fill - self.fill_width
+        self.fill_width += diff * dt * UI_SCORE_FILL_SPEED# dt lerp
+        self.pulse_timer += dt
+        if self.player.level > self.last_level:
+            self.last_level = self.player.level
+            self.level_up_timer = self.level_up_bounce_duration
+            self.level_up_shake = UI_SCORE_LEVEL_UP_SHAKE_TIMER
+            self.zoom = Vector2(UI_SCORE_BAR_ZOOM_MAX, UI_SCORE_BAR_ZOOM_MAX)
+        if self.level_up_timer > 0:
+            self.fill_width = 0
+            self.level_up_timer -= dt
+            if self.level_up_timer < 0:
+                self.level_up_timer = 0
+        if self.level_up_shake > 0:
+            self.level_up_shake -= dt
+            self.zoom.x = max((self.level_up_shake / UI_SCORE_BAR_ZOOM_MAX) * dt, 0)
+            self.zoom.y = max((self.level_up_shake / UI_SCORE_BAR_ZOOM_MAX) * dt, 0)
+            if self.level_up_shake < 0:
+                self.level_up_shake = 0
 
     def draw(self):
-        render.polygon(self.game.screen,
-                       UI_COLOR,
-                       [
-                           Vector2(self.frame.x, self.frame.y),
-                           Vector2(self.frame.x + self.frame.width,
-                                   self.frame.y),
-                           Vector2(self.frame.x + self.frame.width,
-                                   self.frame.y + self.frame.height),
-                           Vector2(self.frame.x,
-                                   self.frame.y + self.frame.height)
-                       ],
-                       2)
-        render.polygon(self.game.screen,
-                       UI_COLOR,
-                       [
-                           self.player_score_position,
-                           Vector2(self.player_score_position.x,
-                                   self.player_score_position.y
-                                   + UI_SCORE_HEIGHT)
-                       ],
-                       8)
+        if self.player.player_dead:
+            return
+        screen = self.game.screen
+        overshoot = 1.0
+        if self.level_up_timer > 0:
+            p = (self.level_up_timer / self.level_up_bounce_duration)
+            overshoot = 1.0 + 0.2 * math.sin(p * math.pi)
+        shake_offset = 0
+        if self.level_up_shake > 0:
+            shake_offset = math.sin(self.pulse_timer * UI_SCORE_LEVEL_UP_SHAKE_AMOUNT) * (6 * self.level_up_shake)
+        final_fill = self.fill_width * overshoot
+        final_fill = min(final_fill, UI_SCORE_WIDTH)  # never exceed frame visually
+        pulse_scale = 1.0 + 0.05 * math.sin(self.pulse_timer * 10)
+        fill_height = int(self.frame.height * pulse_scale)
+        fill_y = self.frame.y + (self.frame.height - fill_height)
+        frame = Rect((self.frame.x  - self.zoom.x) + shake_offset, self.frame.y - self.zoom.y, self.frame.width + (self.zoom.x * 2), self.frame.height + (self.zoom.y * 2))
+        render.rect(screen, UI_COLOR, frame, 2)
+        fill_rect = Rect(
+            (self.frame.x - self.zoom.x) + shake_offset,
+            fill_y - self.zoom.y,
+            final_fill + (self.zoom.x * 2),
+            fill_height + (self.zoom.y * 2)
+        )
+        render.rect(screen, UI_COLOR, fill_rect)

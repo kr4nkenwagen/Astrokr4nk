@@ -16,6 +16,7 @@ class ui_game_over(entity):
         self.desc_font = Font(FONT_BOLD, 32)
         self.desc = None
         self.player = None
+        self.is_ui = True
 
     def update(self):
         if self.player is None:

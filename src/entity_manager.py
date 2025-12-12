@@ -19,14 +19,29 @@ class entity_manager:
     def draw(self):
         curr_ent = self.first_entity
         while curr_ent is not None:
-            if curr_ent.polygon is not None and curr_ent.polygon.enabled:
-                curr_ent.polygon.calc(
-                    curr_ent.position,
-                    curr_ent.rotation,
-                    curr_ent.radius,
-                    self.game.dt)
-                self.game.rendr_manager.add_queue(curr_ent.polygon)
-            curr_ent.draw()
+            if not curr_ent.is_ui:
+                if curr_ent.polygon is not None and curr_ent.polygon.enabled:
+                    curr_ent.polygon.calc(
+                        curr_ent.position,
+                        curr_ent.rotation,
+                        curr_ent.radius,
+                        self.game.dt)
+                    self.game.rendr_manager.add_queue(curr_ent.polygon)
+                curr_ent.draw()
+            curr_ent = curr_ent.next
+
+    def draw_ui(self):
+        curr_ent = self.first_entity
+        while curr_ent is not None:
+            if curr_ent.is_ui:
+                if curr_ent.polygon is not None and curr_ent.polygon.enabled:
+                    curr_ent.polygon.calc(
+                        curr_ent.position,
+                        curr_ent.rotation,
+                        curr_ent.radius,
+                        self.game.dt)
+                    self.game.rendr_manager.add_queue(curr_ent.polygon)
+                curr_ent.draw()
             curr_ent = curr_ent.next
 
     def update_physics(self):
