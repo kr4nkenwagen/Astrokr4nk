@@ -21,6 +21,7 @@ class entity(sprite.Sprite):
         self.angular_velocity = 0
         self.use_physics = False
         self.destroyed = False
+        self.is_ui = False
 
     def update(self):
         pass

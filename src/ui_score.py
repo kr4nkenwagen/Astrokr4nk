@@ -22,6 +22,7 @@ class ui_score(entity):
         self.player = None
         self.value = 0
         self.player_score_position = Vector2(UI_OFFSET, self.frame.y)
+        self.is_ui = True
 
     def update(self):
         if self.player is None:

@@ -4,6 +4,7 @@ from ui_score import ui_score
 from ui_level import ui_level
 from ui_shield import ui_shield
 from ui_speedometer import ui_speedometer
+from ui_score_numbers import ui_score_numbers
 
 
 class ui(entity):
@@ -18,4 +19,5 @@ class ui(entity):
             self.game.ent_manager.add_entity(ui_shield())
             self.game.ent_manager.add_entity(ui_speedometer())
             self.game.ent_manager.add_entity(ui_game_over())
+            self.game.ent_manager.add_entity(ui_score_numbers())
             self.initialized = True

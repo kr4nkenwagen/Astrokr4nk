@@ -18,6 +18,7 @@ class ui_level(entity):
         self.font = Font(FONT_BOLD, FONT_SIZE)
         self.text = None
         self.player = None
+        self.is_ui = True
 
     def update(self):
         if self.player is None:

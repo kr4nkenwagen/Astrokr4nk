@@ -1,6 +1,9 @@
 from constants import PLAYER_MAX_SPEED, \
-    PLAYER_SHIELD_RADIUS, SCREEN_HEIGHT, SCREEN_WIDTH, \
-    UI_COLOR, UI_OFFSET, UI_SPEEDOMETER_MAX_SHAKE_AMOUNT, UI_SPEEDOMETER_SECTIONS, \
+    SCREEN_HEIGHT, \
+    SCREEN_WIDTH, \
+    UI_COLOR, UI_OFFSET, \
+    UI_SPEEDOMETER_MAX_SHAKE_AMOUNT, \
+    UI_SPEEDOMETER_SECTIONS, \
     FONT_BOLD, \
     FONT_SIZE, \
     UI_COLOR_RED, UI_SPEEDOMETER_SHAKE_THRESHOLD
@@ -22,6 +25,7 @@ class ui_speedometer(entity):
         self.color = Color(UI_COLOR)
         self.font = Font(FONT_BOLD, FONT_SIZE)
         self.text = None
+        self.is_ui = True
 
 
     def update(self):
