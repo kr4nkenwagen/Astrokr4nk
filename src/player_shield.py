@@ -67,6 +67,7 @@ class player_shield(entity):
             direction = Vector2.normalize(direction)
             self.polygon.ripple_direction.append(direction)
             self.polygon.ripple = PLAYER_SHIELD_RIPPLE_MAX
+            self.player.trigger_screen_shake(10)
 
     def on_physics(self, entity):
         if self.value > 0:

@@ -57,8 +57,6 @@ class ui_speedometer(entity):
                                      True,
                                      self.color)
 
-
-
     def draw(self):
         if self.player.player_dead:
             return

@@ -1,8 +1,13 @@
-from constants import PLAYER_RADIUS, \
-    PLAYER_REAR_THRUST_COLOR, \
-    PLAYER_REAR_THRUST_FLAME_PADDING, \
-    PLAYER_REAR_THRUST_FLAME_UPDATE_RATE, \
-    PLAYER_REAR_THRUST_THICKNESS
+from constants import (
+    PLAYER_MAX_SPEED,
+    PLAYER_RADIUS,
+    PLAYER_REAR_THRUST_COLOR,
+    PLAYER_REAR_THRUST_FLAME_PADDING,
+    PLAYER_REAR_THRUST_FLAME_UPDATE_RATE,
+    PLAYER_REAR_THRUST_LENGTH,
+    PLAYER_REAR_THRUST_THICKNESS,
+    PLAYER_REAR_THRUST_MIN
+)
 from pygame import Vector2
 from random import randint
 from polygon import polygon
@@ -14,6 +19,7 @@ class player_thrust_polygon(polygon):
         self.timer = PLAYER_REAR_THRUST_FLAME_UPDATE_RATE
         self.flame = []
         self.player_dead = False
+        self.player_velocity = Vector2(0, 0)
 
     def calc(self, position, rotation, radius, dt):
         self.color = PLAYER_REAR_THRUST_COLOR
@@ -29,14 +35,22 @@ class player_thrust_polygon(polygon):
 
     def randomize_flame(self):
         num_points = randint(3, 7)
+        speed = self.player_velocity.length()
+        speed_ratio = min(speed / PLAYER_MAX_SPEED, 1.0)
         flame_width = PLAYER_RADIUS - (PLAYER_REAR_THRUST_FLAME_PADDING * 2)
-        flame_length = 15
+        flame_length = int(
+            max(PLAYER_REAR_THRUST_MIN, speed_ratio) *
+            PLAYER_REAR_THRUST_LENGTH
+        )
         flame_unifier = -flame_width // 2
         self.flame = []
         self.flame.append(Vector2(-flame_width, 0))
         for _ in range(num_points):
             spread = randint(0, flame_width // num_points)
-            depth = randint(5, flame_length)
+            depth = randint(
+                int(PLAYER_REAR_THRUST_MIN * PLAYER_REAR_THRUST_LENGTH),
+                flame_length
+            )
             self.flame.append(Vector2(flame_unifier + spread, -depth))
             flame_unifier += flame_width // num_points
         self.flame.append(Vector2(flame_width, 0))

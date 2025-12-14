@@ -1,19 +1,25 @@
-from constants import LEVEL_LIMIT, \
-    PLAYER_ACCELERATION, \
-    PLAYER_DEACCELERATION, \
-    PLAYER_FIRE_RATE, \
-    PLAYER_MAX_SPEED, \
-    PLAYER_RADIUS, \
-    PLAYER_TURN_SPEED, \
-    SCREEN_ACCELERATION, \
-    SCREEN_DEACCELERATION, \
-    SCREEN_HEIGHT, \
-    SCREEN_OFFSET_LIMIT, \
-    SCREEN_WIDTH
+from constants import (
+    LEVEL_LIMIT,
+    PLAYER_ACCELERATION,
+    PLAYER_DEACCELERATION,
+    PLAYER_FIRE_RATE,
+    PLAYER_MAX_SPEED,
+    PLAYER_RADIUS,
+    PLAYER_TURN_SPEED,
+    SCREEN_ACCELERATION,
+    SCREEN_DEACCELERATION,
+    SCREEN_HEIGHT,
+    SCREEN_OFFSET_LIMIT,
+    SCREEN_WIDTH,
+    SCREEN_SHAKE_MAX,
+    SCREEN_SHAKE_DECAY,
+    SCREEN_SHAKE_THRESHOLD,
+)
+from random import uniform
 from entity import entity
 from player_polygon import player_polygon
 from player_shot import player_shot
-from player_thurst_representation import player_thrust_representation
+from player_thrust_representation import player_thrust_representation
 from player_shield import player_shield
 from pygame import Vector2, \
     K_a, \
@@ -29,6 +35,8 @@ class player(entity):
     camera_offset = Vector2(0, 0)
     player_fire_rate_counter = 0
     player_dead = False
+    screen_shake_offset = Vector2(0, 0)
+    screen_shake_strength = 0.0
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
@@ -75,8 +83,30 @@ class player(entity):
             self.accelerate(dt)
         else:
             self.deaccelerate(dt)
-        self.position = self.camera_offset + \
-            Vector2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        self.update_screen_shake()
+        self.position = (
+                self.camera_offset + self.screen_shake_offset+
+                Vector2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        )
+
+    def trigger_screen_shake(self, strength):
+        self.screen_shake_strength = max(
+            self.screen_shake_strength, strength
+        )
+
+    def get_relative_position(self):
+        return -self.velocity * self.game.dt
+
+    def update_screen_shake(self):
+        if self.screen_shake_strength <= 0:
+                self.screen_shake_offset = Vector2(0, 0)
+                return
+        self.screen_shake_offset = Vector2(
+            uniform(-1, 1),
+            uniform(-1, 1)
+        ) * self.screen_shake_strength
+        self.screen_shake_strength -= SCREEN_DEACCELERATION * self.game.dt
+        self.screen_shake_strength = max(self.screen_shake_strength, 0)
 
     def update(self):
         if self.thrust_representation is None:

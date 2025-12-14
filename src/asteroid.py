@@ -39,7 +39,7 @@ class asteroid(entity):
                               self.player.position).normalize()
                 self.position += player_dir * self.target_radius
         if self.player:
-            self.position += self.player.velocity * self.game.dt * -1
+            self.position += self.player.get_relative_position()
         self.life_timer += self.game.dt
         if self.life_timer > ASTEROID_LIFETIME:
             self.destroyed_by_player = False
