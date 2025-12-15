@@ -109,9 +109,8 @@ class entity_manager:
     def remove_entity(self, entity):
         if entity is None:
             return
-        if self.first_entity.id == entity.id:
-            entity.next = self.first_entity.next
-            self.first_entity = entity
+        if self.first_entity == entity:
+            self.first_entity = entity.next
             entity.destroyed = True
             entity.on_destroy()
             return
@@ -124,13 +123,15 @@ class entity_manager:
                 return
             curr_ent = curr_ent.next
 
+    def purge_entities(self):
+        while self.first_entity:
+            self.remove_entity(self.first_entity)
+
     def get_entity(self, name):
         curr_ent = self.first_entity
         while type(curr_ent).__name__ != name:
             curr_ent = curr_ent.next
         return curr_ent
-
-
 
     def physics_bounce(self, e1, e2, normal, penetration,
                     restitution=0.8, percent=0.8, slop=0.01):
