@@ -23,4 +23,6 @@ class room_manager():
                 self.current_room = room
                 self.current_room.load()
 
+    def get_current_room_name(self):
+        return type(self.current_room).__name__
 

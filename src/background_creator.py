@@ -1,5 +1,6 @@
 from random import randint
 from background_star import background_star
+from start_background_star import star_background_star
 from constants import BACKGROUND_LAYERS, \
     BACKGROUND_MAX_STARS, \
     BACKGROUND_MIN_STARS
@@ -15,7 +16,10 @@ class background_creator(entity):
         while layer > 0:
             amount = randint(BACKGROUND_MIN_STARS, BACKGROUND_MAX_STARS)
             while amount > 0:
-                self.game.ent_manager.add_entity(background_star(layer))
+                if self.game.rm_manager.get_current_room_name() == "start_room":
+                    self.game.ent_manager.add_entity(star_background_star(layer))
+                else:
+                    self.game.ent_manager.add_entity(background_star(layer))
                 amount -= 1
             layer -= 1
         self.game.ent_manager.remove_entity(self)
