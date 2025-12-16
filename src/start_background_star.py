@@ -16,14 +16,14 @@ class star_background_star(entity):
         
     def init(self):
         self.position.x = self.game.screen_width // 2
-        self.position.y = self.game.screen_height // 2
+        self.position.y = 250
         self.collideable = False
         self.velocity = Vector2(uniform(-1, 1), uniform(-1, 1)) * \
             -1 * (self.layer * BACKGROUND_SPEED_MULTIPLIER) * 2000
 
 
     def update(self):
-        center = Vector2((self.game.screen_width // 2), (self.game.screen_height // 2))
+        center = Vector2((self.game.screen_width // 2), 250)
         self.position += self.velocity * self.game.dt
         if self.position.x < 0:
             self.position = center

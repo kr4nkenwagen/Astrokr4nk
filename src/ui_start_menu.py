@@ -34,7 +34,7 @@ class ui_start_menu(entity):
 
     def init(self):
         self.shake_time = 0.0
-        logo = image.load("src/astrokr4nk.png").convert_alpha()
+        logo = image.load("resources/logo.png").convert_alpha()
         self.logo = transform.smoothscale(logo, (500, 250))
         self.logo_rect = logo.get_rect()
         self.logo_rect.x += self.game.screen_width // 2 - 250
