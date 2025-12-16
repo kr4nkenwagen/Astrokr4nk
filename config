@@ -1,0 +1,10 @@
+keybind w up
+keybind s down
+keybind a left
+keybind d right
+keybind space shoot
+keybind return enter
+keybind escape exit
+width 1280
+height 720
+debug true

@@ -29,7 +29,7 @@ class ui_shield(entity):
 
     def update(self):
         if self.shield is None:
-            self.shield = self.game.ent_manager.get_entity("player_shield")
+            self.shield = self.game.entities.get_entity("player_shield")
             return
         if self.shield.player.player_dead:
             return

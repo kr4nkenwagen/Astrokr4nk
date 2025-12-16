@@ -19,7 +19,7 @@ class room_manager():
             if type(room).__name__ == name:
                 if self.current_room:
                     self.current_room.unload()
-                self.game.ent_manager.purge_entities()
+                self.game.entities.purge_entities()
                 self.current_room = room
                 self.current_room.load()
 

@@ -25,7 +25,7 @@ class menu_manager:
                     curr_ent.rotation,
                     curr_ent.radius,
                     self.game.dt)
-                self.game.rendr_manager.add_queue(curr_ent.polygon)
+                self.game.render.add_queue(curr_ent.polygon)
             curr_ent.draw()
             curr_ent = curr_ent.next
 

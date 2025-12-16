@@ -1,17 +1,20 @@
-from constants import PLAYER_MAX_SPEED, \
-    SCREEN_HEIGHT, \
-    SCREEN_WIDTH, \
-    UI_COLOR, UI_OFFSET, \
-    UI_SPEEDOMETER_MAX_SHAKE_AMOUNT, \
-    UI_SPEEDOMETER_SECTIONS, \
-    FONT_BOLD, \
-    FONT_SIZE, \
-    UI_COLOR_RED, UI_SPEEDOMETER_SHAKE_THRESHOLD
+from constants import (
+    PLAYER_MAX_SPEED,
+    UI_COLOR, UI_OFFSET,
+    UI_SPEEDOMETER_MAX_SHAKE_AMOUNT,
+    UI_SPEEDOMETER_SECTIONS,
+    FONT_BOLD,
+    FONT_SIZE,
+    UI_COLOR_RED,
+    UI_SPEEDOMETER_SHAKE_THRESHOLD
+)
 from entity import entity
-from pygame import Vector2, \
-    Rect, \
-    Color, \
+from pygame import (
+    Vector2,
+    Rect,
+    Color,
     draw as render
+)
 import random
 from pygame.font import Font
 
@@ -19,23 +22,22 @@ from pygame.font import Font
 class ui_speedometer(entity):
     def __init__(self):
         super().__init__(0, 0, 0)
-        self.player = None
-        self.frame = Rect(SCREEN_WIDTH - 30 - UI_OFFSET, UI_OFFSET, 30, SCREEN_HEIGHT - (UI_OFFSET * 2))
-        self.value = Rect(SCREEN_WIDTH - 30 - UI_OFFSET, UI_OFFSET, 30, 0)
+        self.is_ui = True
+
+    def init(self):
+        self.player = self.game.entities.get_entity("player")
+        self.frame = Rect(self.game.screen_width - 30 - UI_OFFSET, UI_OFFSET, 30, self.game.screen_height - (UI_OFFSET * 2))
+        self.value = Rect(self.game.screen_width - 30 - UI_OFFSET, UI_OFFSET, 30, 0)
         self.color = Color(UI_COLOR)
         self.font = Font(FONT_BOLD, FONT_SIZE)
         self.text = None
-        self.is_ui = True
 
 
     def update(self):
-        if self.player is None:
-            self.player = self.game.ent_manager.get_entity("player")
-            return
         if self.player.player_dead:
             return
         fill_ratio = self.player.velocity.length() / PLAYER_MAX_SPEED
-        base_x = SCREEN_WIDTH - 30 - UI_OFFSET
+        base_x = self.game.screen_width - 30 - UI_OFFSET
         base_y = UI_OFFSET
         if fill_ratio >= UI_SPEEDOMETER_SHAKE_THRESHOLD:
             self.color = Color(UI_COLOR).lerp(UI_COLOR_RED, fill_ratio)

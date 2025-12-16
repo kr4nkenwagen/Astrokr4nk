@@ -13,6 +13,9 @@ class entity_manager:
                 curr_ent.position = curr_ent.parent.position.copy()
                 curr_ent.rotation = curr_ent.parent.rotation
                 curr_ent.radius = curr_ent.parent.radius
+            if not curr_ent.is_initialized:
+                curr_ent.init()
+                curr_ent.is_initialized = True
             curr_ent.update()
             curr_ent = curr_ent.next
 
@@ -26,7 +29,7 @@ class entity_manager:
                         curr_ent.rotation,
                         curr_ent.radius,
                         self.game.dt)
-                    self.game.rendr_manager.add_queue(curr_ent.polygon)
+                    self.game.render.add_queue(curr_ent.polygon)
                 curr_ent.draw()
             curr_ent = curr_ent.next
 
@@ -40,7 +43,7 @@ class entity_manager:
                         curr_ent.rotation,
                         curr_ent.radius,
                         self.game.dt)
-                    self.game.rendr_manager.add_queue(curr_ent.polygon)
+                    self.game.render.add_queue(curr_ent.polygon)
                 curr_ent.draw()
             curr_ent = curr_ent.next
 
@@ -49,7 +52,7 @@ class entity_manager:
         dt = self.game.dt
         while curr_ent is not None:
             if curr_ent.use_physics:
-                hits = self.game.coll_manager.check_velocity_position(curr_ent)
+                hits = self.game.collision.check_velocity_position(curr_ent)
                 current_hit_entities = [h["other"] for h in hits]
                 if len(hits) == 0:
                     curr_ent.position += curr_ent.velocity * dt

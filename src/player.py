@@ -8,9 +8,7 @@ from constants import (
     PLAYER_TURN_SPEED,
     SCREEN_ACCELERATION,
     SCREEN_DEACCELERATION,
-    SCREEN_HEIGHT,
-    SCREEN_OFFSET_LIMIT,
-    SCREEN_WIDTH
+    SCREEN_OFFSET_LIMIT
 )
 from entity import entity
 from player_polygon import player_polygon
@@ -72,15 +70,15 @@ class player(entity):
         else:
             self.deaccelerate()
         self.position = self.camera_offset + \
-            Vector2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+            Vector2(self.game.screen_width // 2, self.game.screen_height // 2)
 
     def update(self):
         if self.thrust_representation is None:
-            self.thrust_representation = self.game.ent_manager.add_entity(
+            self.thrust_representation = self.game.entities.add_entity(
                 player_thrust_representation(self.position.x,
                                              self.position.y,
                                              10))
-            self.shield_representation = self.game.ent_manager.add_entity(player_shield( self.position.x, self.position.y))
+            self.shield_representation = self.game.entities.add_entity(player_shield( self.position.x, self.position.y))
             self.thrust_representation.parent = self
         self.rotate()
         self.move()
@@ -98,7 +96,7 @@ class player(entity):
         if self.player_fire_rate_counter > 0:
             return
         origin = self.position + self.forward() * (self.radius + 10)
-        self.game.ent_manager.add_entity(
+        self.game.entities.add_entity(
             player_shot(origin.x, origin.y, self.rotation))
         self.player_fire_rate_counter += self.game.dt
 

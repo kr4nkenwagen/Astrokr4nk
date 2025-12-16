@@ -32,8 +32,8 @@ class asteroid(entity):
 
     def update(self):
         if not self.player:
-            self.player = self.game.ent_manager.get_entity("player")
-            while len(self.game.coll_manager.check_velocity_position(self)) \
+            self.player = self.game.entities.get_entity("player")
+            while len(self.game.collision.check_velocity_position(self)) \
                     != 0:
                 player_dir = (self.position -
                               self.player.position).normalize()
@@ -43,7 +43,7 @@ class asteroid(entity):
         self.life_timer += self.game.dt
         if self.life_timer > ASTEROID_LIFETIME:
             self.destroyed_by_player = False
-            self.game.ent_manager.remove_entity(self)
+            self.game.entities.remove_entity(self)
         if self.radius < self.target_radius:
             self.radius += self.game.dt * ASTEROID_GROW_SPEED
             if self.radius > self.target_radius:
@@ -52,7 +52,7 @@ class asteroid(entity):
             self.radius -= self.game.dt * ASTEROID_SHRINK_SPEED
             if self.radius < 1:
                 self.destroyed_by_player = True
-                self.game.ent_manager.remove_entity(self)
+                self.game.entities.remove_entity(self)
 
     def on_collision_enter(self, entity, collision_point):
         velocity = (self.position + self.velocity).reflect(entity.position)
@@ -62,7 +62,7 @@ class asteroid(entity):
         if not self.destroyed_by_player:
             return
         self.player.score += SCORE_MULTIPLIER / self.max_radius
-        self.game.ent_manager.get_entity("ui_score_numbers").create_score_text(SCORE_MULTIPLIER / self.max_radius, self.position)
+        self.game.entities.get_entity("ui_score_numbers").create_score_text(SCORE_MULTIPLIER / self.max_radius, self.position)
         if self.max_radius < ASTEROID_MIN_RADIUS + ASTEROID_MIN_RADIUS_SPAN:
             return
         child_count = max(2, self.max_radius // ASTEROID_CHILD_DIVIDER)
@@ -87,7 +87,7 @@ class asteroid(entity):
                     random_vel
                 )
                 entities.append(cur_ent)
-        self.game.ent_manager.add_entities(entities)
+        self.game.entities.add_entities(entities)
 
     def hit(self):
         self.target_radius = 0
