@@ -11,13 +11,8 @@ from constants import (
     START_ROOM_SPACING
 )
 from pygame import (
-    K_s,
-    K_w,
-    K_SPACE,
-    key,
     image,
     transform,
-    Vector2
 )
 from pygame.font import Font
 from entity import entity
@@ -47,16 +42,15 @@ class ui_start_menu(entity):
         self.logo_rect.y += 100
 
     def update(self):
-        keys = key.get_pressed()
         prev_index = self.selected_index
-        if keys[K_w]:
+        if self.game.io.is_down("up"):
             self.selected_index = max(self.selected_index - 1, 0)
-        if keys[K_s]:
+        if self.game.io.is_down("down"):
             self.selected_index = min(
                 self.selected_index + 1,
                 len(self.menu_options) - 1
             )
-        if keys[K_SPACE]:
+        if self.game.io.is_released("shoot"):
             dest = self.menu_options[self.selected_index]["destination"]
             if dest == "exit":
                 self.game.game_running = False

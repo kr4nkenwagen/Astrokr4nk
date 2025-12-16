@@ -1,26 +1,23 @@
-from constants import LEVEL_LIMIT, \
-    PLAYER_ACCELERATION, \
-    PLAYER_DEACCELERATION, \
-    PLAYER_FIRE_RATE, \
-    PLAYER_MAX_SPEED, \
-    PLAYER_RADIUS, \
-    PLAYER_TURN_SPEED, \
-    SCREEN_ACCELERATION, \
-    SCREEN_DEACCELERATION, \
-    SCREEN_HEIGHT, \
-    SCREEN_OFFSET_LIMIT, \
+from constants import (
+    LEVEL_LIMIT,
+    PLAYER_ACCELERATION,
+    PLAYER_DEACCELERATION,
+    PLAYER_FIRE_RATE,
+    PLAYER_MAX_SPEED,
+    PLAYER_RADIUS,
+    PLAYER_TURN_SPEED,
+    SCREEN_ACCELERATION,
+    SCREEN_DEACCELERATION,
+    SCREEN_HEIGHT,
+    SCREEN_OFFSET_LIMIT,
     SCREEN_WIDTH
+)
 from entity import entity
 from player_polygon import player_polygon
 from player_shot import player_shot
 from player_thurst_representation import player_thrust_representation
 from player_shield import player_shield
-from pygame import Vector2, \
-    K_a, \
-    K_d, \
-    K_w, \
-    K_SPACE, \
-    key
+from pygame import Vector2
 
 
 class player(entity):
@@ -33,7 +30,6 @@ class player(entity):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.polygon = player_polygon()
-        #self.collideable = True
         self.rotation = 180
         self.score = 0
         self.level = 0
@@ -41,40 +37,40 @@ class player(entity):
     def forward(self):
         return Vector2(0, 1).rotate(self.rotation)
 
-    def rotate(self, dt, keys):
+    def rotate(self):
         direction = 0
-        if keys[K_a]:
+        if self.game.io.is_down("left"):
             direction += 1
-        if keys[K_d]:
+        if self.game.io.is_down("right"):
             direction -= 1
-        self.rotation += direction * PLAYER_TURN_SPEED * dt
+        self.rotation += direction * PLAYER_TURN_SPEED * self.game.dt
 
-    def accelerate(self, dt):
+    def accelerate(self):
         self.thrust_representation.show = True
         self.velocity = self.velocity.lerp(
             self.forward() *
-            PLAYER_MAX_SPEED, PLAYER_ACCELERATION / PLAYER_MAX_SPEED * dt)
+            PLAYER_MAX_SPEED, PLAYER_ACCELERATION / PLAYER_MAX_SPEED * self.game.dt)
         if self.camera_offset.length() < SCREEN_OFFSET_LIMIT:
             self.camera_offset = self.camera_offset.lerp(self.forward() *
                                                          SCREEN_OFFSET_LIMIT,
                                                          SCREEN_ACCELERATION *
-                                                         dt /
+                                                         self.game.dt /
                                                          SCREEN_OFFSET_LIMIT)
 
-    def deaccelerate(self, dt):
+    def deaccelerate(self):
         self.thrust_representation.show = False
         self.velocity = self.velocity.lerp(Vector2(
-            0, 0), PLAYER_DEACCELERATION / PLAYER_MAX_SPEED * dt)
+            0, 0), PLAYER_DEACCELERATION / PLAYER_MAX_SPEED * self.game.dt)
         if self.camera_offset.length() != 0:
             self.camera_offset = self.camera_offset.lerp(Vector2(0, 0),
                                                          min(
-                (SCREEN_DEACCELERATION * dt) / self.camera_offset.length(), 1))
+                (SCREEN_DEACCELERATION * self.game.dt) / self.camera_offset.length(), 1))
 
-    def move(self, dt, keys):
-        if keys[K_w]:
-            self.accelerate(dt)
+    def move(self):
+        if self.game.io.is_down("up"):
+            self.accelerate()
         else:
-            self.deaccelerate(dt)
+            self.deaccelerate()
         self.position = self.camera_offset + \
             Vector2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
@@ -86,10 +82,9 @@ class player(entity):
                                              10))
             self.shield_representation = self.game.ent_manager.add_entity(player_shield( self.position.x, self.position.y))
             self.thrust_representation.parent = self
-        keys = key.get_pressed()
-        self.rotate(self.game.dt, keys)
-        self.move(self.game.dt, keys)
-        if keys[K_SPACE]:
+        self.rotate()
+        self.move()
+        if self.game.io.is_down("shoot"):
             self.shoot()
         self.reload()
         if self.score > LEVEL_LIMIT:

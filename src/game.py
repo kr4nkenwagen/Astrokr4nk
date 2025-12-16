@@ -3,6 +3,7 @@ from menu_manager import menu_manager
 from room_manager import room_manager
 from entity_manager import entity_manager
 from render_manager import render_manager
+from input_manager import input_manager
 from constants import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
@@ -14,7 +15,12 @@ from pygame import (
     display,
     time,
     K_ESCAPE,
-    key
+    K_RETURN,
+    K_SPACE,
+    K_w,
+    K_a,
+    K_s,
+    K_d
 )
 
 class game():
@@ -33,6 +39,15 @@ class game():
         print("Screen width: " + str(SCREEN_WIDTH))
         print("Screen height: " + str(SCREEN_HEIGHT))
         init()
+        self.io = input_manager(self)
+        self.io.register_keybind("up", K_w)
+        self.io.register_keybind("down", K_s)
+        self.io.register_keybind("left", K_a)
+        self.io.register_keybind("right", K_d)
+        self.io.register_keybind("shoot", K_SPACE)
+        self.io.register_keybind("enter", K_RETURN)
+        self.io.register_keybind("exit", K_ESCAPE)
+
         self.ent_manager = entity_manager(self)
         self.rendr_manager = render_manager(self)
         self.coll_manager = collision_manager(self)
@@ -47,9 +62,9 @@ class game():
     def update(self):
         if DEBUG_ENABLED:
             self.screen.fill(BACKGROUND_COLOR)
-        keys = key.get_pressed()
-        if keys[K_ESCAPE]:
+        if self.io.is_released("exit"):
             self.game_paused = not self.game_paused
+        self.io.update()
         if self.game_paused == False:
             self.ent_manager.update()
             self.ent_manager.update_physics()
