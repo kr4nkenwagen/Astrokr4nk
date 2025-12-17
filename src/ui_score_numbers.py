@@ -26,7 +26,7 @@ class ui_score_numbers(entity):
 
     def update(self):
         if not self.player:
-            self.player = self.game.ent_manager.get_entity("player")
+            self.player = self.game.entities.get_entity("player")
         dt = self.game.dt
 
         for text in self.text_stack[:]:

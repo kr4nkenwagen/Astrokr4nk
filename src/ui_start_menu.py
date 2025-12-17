@@ -1,8 +1,6 @@
 from constants import (
     FONT_BOLD,
     FONT_SIZE,
-    SCREEN_HEIGHT,
-    SCREEN_WIDTH,
     UI_COLOR,
     UI_DISABLED_COLOR,
     START_ROOM_SCROLL_SPEED,
@@ -11,13 +9,8 @@ from constants import (
     START_ROOM_SPACING
 )
 from pygame import (
-    K_s,
-    K_w,
-    K_SPACE,
-    key,
     image,
     transform,
-    Vector2
 )
 from pygame.font import Font
 from entity import entity
@@ -25,7 +18,6 @@ from math import (
     sin,
     tau
 )
-
 
 class ui_start_menu(entity):
     menu_options = [
@@ -39,29 +31,30 @@ class ui_start_menu(entity):
         super().__init__(0, 0, 0)
         self.font = Font(FONT_BOLD, FONT_SIZE)
         self.is_ui = True
+
+    def init(self):
         self.shake_time = 0.0
-        logo = image.load("src/astrokr4nk.png").convert_alpha()
+        logo = image.load("resources/logo.png").convert_alpha()
         self.logo = transform.smoothscale(logo, (500, 250))
         self.logo_rect = logo.get_rect()
-        self.logo_rect.x += SCREEN_WIDTH // 2 - 250
+        self.logo_rect.x += self.game.screen_width // 2 - 250
         self.logo_rect.y += 100
 
     def update(self):
-        keys = key.get_pressed()
         prev_index = self.selected_index
-        if keys[K_w]:
+        if self.game.io.is_down("up"):
             self.selected_index = max(self.selected_index - 1, 0)
-        if keys[K_s]:
+        if self.game.io.is_down("down"):
             self.selected_index = min(
                 self.selected_index + 1,
                 len(self.menu_options) - 1
             )
-        if keys[K_SPACE]:
+        if self.game.io.is_released("shoot"):
             dest = self.menu_options[self.selected_index]["destination"]
             if dest == "exit":
                 self.game.game_running = False
                 return
-            self.game.rm_manager.load_room(dest)
+            self.game.rooms.load_room(dest)
         if prev_index != self.selected_index:
             self.shake_time = 0.0
         diff = self.selected_index - self.current_index
@@ -70,8 +63,8 @@ class ui_start_menu(entity):
 
     def draw(self):
         self.game.screen.blit(self.logo, self.logo_rect)
-        center_y = SCREEN_HEIGHT // 2
-        center_x = SCREEN_WIDTH // 2
+        center_y = self.game.screen_height// 2
+        center_x = self.game.screen_width // 2
         for i, option in enumerate(self.menu_options):
             offset = i - self.current_index
             y = center_y + offset * START_ROOM_SPACING

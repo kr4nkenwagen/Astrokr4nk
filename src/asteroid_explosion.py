@@ -12,4 +12,4 @@ class asteroid_explosion(entity):
     def update(self):
         self.timer += self.game.dt
         if self.timer > ASTEROID_EXPLOSION_LIFETIME:
-            self.game.ent_manager.remove_entity(self)
+            self.game.entities.remove_entity(self)

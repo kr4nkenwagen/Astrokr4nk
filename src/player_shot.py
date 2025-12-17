@@ -18,7 +18,7 @@ class player_shot(entity):
     def update(self):
         if self.first_frame:
             distance = LASER_MAX_LENGTH
-            target, distance = self.game.coll_manager.cone_check(
+            target, distance = self.game.collision.cone_check(
                 self.position,
                 self.rotation,
                 LASER_AIM_ASSIST_DEGREE,
@@ -37,10 +37,10 @@ class player_shot(entity):
                     explosion_position = self.position + \
                         (Vector2(0, 1).rotate(self.rotation) *
                             distance / 2)
-                    self.game.ent_manager.add_entity(asteroid_explosion(
+                    self.game.entities.add_entity(asteroid_explosion(
                         explosion_position.x, explosion_position.y, 30))
                     target.hit()
             self.first_frame = False
         self.lifetime += self.game.dt
         if self.lifetime > LASER_LIFETIME:
-            self.game.ent_manager.remove_entity(self)
+            self.game.entities.remove_entity(self)

@@ -3,62 +3,66 @@ from menu_manager import menu_manager
 from room_manager import room_manager
 from entity_manager import entity_manager
 from render_manager import render_manager
+from configuration_manager import configuration_manager
+from input_manager import input_manager
 from constants import (
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT,
     DEBUG_ENABLED,
     BACKGROUND_COLOR
 )
 from pygame import (
     init,
     display,
-    time,
-    K_ESCAPE,
-    key
+    time
 )
 
 class game():
     screen = None
     clock = None
     dt = 0
-    ent_manager: entity_manager
-    rendr_manager: render_manager
-    coll_manager: collision_manager
+    entities: entity_manager
+    render: render_manager
+    collision: collision_manager
+    config: configuration_manager
+    io: input_manager
     men_manager: menu_manager
     game_running = False
     game_paused = False
 
     def init(self):
+        self.io = input_manager(self)
+        self.config = configuration_manager(self)
+        self.screen_width = self.config.get_int("width")
+        self.screen_height = self.config.get_int("height")
         print("Starting Asteroids!")
-        print("Screen width: " + str(SCREEN_WIDTH))
-        print("Screen height: " + str(SCREEN_HEIGHT))
+        print("Screen width: " + str(self.screen_width))
+        print("Screen height: " + str(self.screen_height))
         init()
-        self.ent_manager = entity_manager(self)
-        self.rendr_manager = render_manager(self)
-        self.coll_manager = collision_manager(self)
+        self.entities = entity_manager(self)
+        self.render = render_manager(self)
+        self.collision = collision_manager(self)
         self.men_manager = menu_manager(self)
-        self.rm_manager = room_manager(self)
-        self.screen = display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.rooms = room_manager(self)
+        self.screen = display.set_mode((self.screen_width, self.screen_height))
         self.clock = time.Clock()
         self.dt = 0
-        self.rm_manager.load_room("start_room")
+        self.rooms.load_room("start_room")
         self.game_running = True
 
     def update(self):
         if DEBUG_ENABLED:
             self.screen.fill(BACKGROUND_COLOR)
-        keys = key.get_pressed()
-        if keys[K_ESCAPE]:
+        if self.io.is_released("exit"):
             self.game_paused = not self.game_paused
+        self.io.update()
         if self.game_paused == False:
-            self.ent_manager.update()
-            self.ent_manager.update_physics()
-            self.coll_manager.update()
+            self.entities.update()
+            self.entities.update_physics()
+            self.collision.update()
         self.men_manager.update()
         self.dt = self.clock.tick() / 1000
 
     def draw(self):
-        self.rendr_manager.draw()
+        self.render.draw()
 
     def end(self):
         print("game closing")

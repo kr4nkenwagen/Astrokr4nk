@@ -14,10 +14,10 @@ class ui(entity):
 
     def update(self):
         if self.initialized is False:
-            self.game.ent_manager.add_entity(ui_score())
-            self.game.ent_manager.add_entity(ui_level())
-            self.game.ent_manager.add_entity(ui_shield())
-            self.game.ent_manager.add_entity(ui_speedometer())
-            self.game.ent_manager.add_entity(ui_game_over())
-            self.game.ent_manager.add_entity(ui_score_numbers())
+            self.game.entities.add_entity(ui_score())
+            self.game.entities.add_entity(ui_level())
+            self.game.entities.add_entity(ui_shield())
+            self.game.entities.add_entity(ui_speedometer())
+            self.game.entities.add_entity(ui_game_over())
+            self.game.entities.add_entity(ui_score_numbers())
             self.initialized = True

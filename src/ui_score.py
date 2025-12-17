@@ -1,7 +1,5 @@
 
 from constants import (
-    SCREEN_HEIGHT,
-    SCREEN_WIDTH,
     UI_SCORE_LEVEL_UP_SHAKE_AMOUNT,
     UI_OFFSET,
     UI_SCORE_BAR_BOUNCE_DURATION,
@@ -20,10 +18,12 @@ import math
 class ui_score(entity):
     def __init__(self):
         super().__init__(0, 0, 0)
+        self.is_ui = True
 
+    def init(self):
         self.frame = Rect(
-            (SCREEN_WIDTH // 2) - UI_SCORE_WIDTH // 2,
-            SCREEN_HEIGHT - UI_OFFSET - UI_SCORE_HEIGHT,
+            (self.game.screen_width // 2) - UI_SCORE_WIDTH // 2,
+            self.game.screen_height - UI_OFFSET - UI_SCORE_HEIGHT,
             UI_SCORE_WIDTH,
             UI_SCORE_HEIGHT
         )
@@ -40,7 +40,7 @@ class ui_score(entity):
     def update(self):
         dt = self.game.dt
         if self.player is None:
-            self.player = self.game.ent_manager.get_entity("player")
+            self.player = self.game.entities.get_entity("player")
             if self.player is None:
                 return
             self.last_level = self.player.level

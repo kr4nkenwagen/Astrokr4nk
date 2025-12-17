@@ -12,7 +12,7 @@ class collision_manager():
         self.game = game
 
     def update(self):
-        cur_ent = self.game.ent_manager.first_entity
+        cur_ent = self.game.entities.first_entity
         while cur_ent is not None:
             if cur_ent.collideable and len(cur_ent.polygon.points) > 0:
                 sec_ent = cur_ent.next
@@ -164,7 +164,7 @@ class collision_manager():
             ray_center = origin + \
                 (Vector2(0, 1).rotate(direction) * distance)
             ray = self.polygon_line(ray_center, direction, step, width)
-            cur_ent = self.game.ent_manager.first_entity
+            cur_ent = self.game.entities.first_entity
             while cur_ent is not None:
                 if cur_ent.collideable and len(cur_ent.polygon.points) > 0:
                     if self.polygons_collide(ray, cur_ent.polygon.points):
@@ -177,7 +177,7 @@ class collision_manager():
         closest_entity = None
         closest_dist = float('inf')
         dir_vec = Vector2(0, 1).rotate(direction)
-        cur_ent = self.game.ent_manager.first_entity
+        cur_ent = self.game.entities.first_entity
         while cur_ent is not None:
             if cur_ent.collideable and len(cur_ent.polygon.points) > 0:
                 to_ent = cur_ent.position - origin

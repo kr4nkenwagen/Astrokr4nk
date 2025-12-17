@@ -22,6 +22,10 @@ class entity(sprite.Sprite):
         self.use_physics = False
         self.destroyed = False
         self.is_ui = False
+        self.is_initialized = False
+
+    def init(self):
+        pass
 
     def update(self):
         pass

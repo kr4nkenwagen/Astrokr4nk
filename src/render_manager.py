@@ -19,12 +19,12 @@ class render_manager():
     def draw(self):
         if not DEBUG_ENABLED:
             self.game.screen.fill(BACKGROUND_COLOR)
-        self.game.ent_manager.draw()
+        self.game.entities.draw()
         for pol in self.render_queue:
             if pol.show:
                 render.polygon(
                     self.game.screen, pol.color, pol.points, pol.thickness)
         if RENDER_UI:
-            self.game.ent_manager.draw_ui()
+            self.game.entities.draw_ui()
         display.flip()
         self.render_queue.clear()
