@@ -1,3 +1,4 @@
+
 from constants import (
     UI_SCORE_LEVEL_UP_SHAKE_AMOUNT,
     UI_OFFSET,
@@ -19,10 +20,11 @@ class ui_score(entity):
         self.is_ui = True
 
     def init(self):
+        self.total_width = self.game.screen_width - (UI_OFFSET * 5)
         self.frame = Rect(
-            (self.game.screen_width // 2) - UI_SCORE_WIDTH // 2,
+            (self.game.screen_width // 2) - self.total_width // 2,
             self.game.screen_height - UI_OFFSET - UI_SCORE_HEIGHT,
-            UI_SCORE_WIDTH,
+            self.total_width,
             UI_SCORE_HEIGHT
         )
         self.fill_width = 0.0
@@ -43,7 +45,7 @@ class ui_score(entity):
                 return
             self.last_level = self.player.level
         score_ratio = min(self.player.score / LEVEL_LIMIT, 1.0)
-        self.target_fill = score_ratio * UI_SCORE_WIDTH
+        self.target_fill = score_ratio * self.total_width
         diff = self.target_fill - self.fill_width
         self.fill_width += diff * dt * UI_SCORE_FILL_SPEED# dt lerp
         self.pulse_timer += dt
@@ -76,7 +78,7 @@ class ui_score(entity):
         if self.level_up_shake > 0:
             shake_offset = math.sin(self.pulse_timer * UI_SCORE_LEVEL_UP_SHAKE_AMOUNT) * (6 * self.level_up_shake)
         final_fill = self.fill_width * overshoot
-        final_fill = min(final_fill, UI_SCORE_WIDTH)  # never exceed frame visually
+        final_fill = min(final_fill, self.total_width)
         pulse_scale = 1.0 + 0.05 * math.sin(self.pulse_timer * 10)
         fill_height = int(self.frame.height * pulse_scale)
         fill_y = self.frame.y + (self.frame.height - fill_height)
