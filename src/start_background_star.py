@@ -13,7 +13,7 @@ class star_background_star(entity):
         super().__init__(0, 0, 1)
         self.layer = layer
         self.polygon = background_star_polygon(self.layer)
-        
+
     def init(self):
         self.position.x = self.game.screen_width // 2
         self.position.y = 250
