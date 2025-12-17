@@ -4,6 +4,7 @@ from room_manager import room_manager
 from entity_manager import entity_manager
 from render_manager import render_manager
 from configuration_manager import configuration_manager
+from audio_manager import audio_manager
 from input_manager import input_manager
 from constants import BACKGROUND_COLOR
 from pygame import (
@@ -21,6 +22,7 @@ class game():
     collision: collision_manager
     config: configuration_manager
     io: input_manager
+    audio: audio_manager
     men_manager: menu_manager
     game_running = False
     game_paused = False
@@ -30,10 +32,8 @@ class game():
         self.config = configuration_manager(self)
         self.screen_width = self.config.get_int("width")
         self.screen_height = self.config.get_int("height")
-        print("Starting Asteroids!")
-        print("Screen width: " + str(self.screen_width))
-        print("Screen height: " + str(self.screen_height))
         init()
+        self.audio = audio_manager(self)
         self.entities = entity_manager(self)
         self.render = render_manager(self)
         self.collision = collision_manager(self)
