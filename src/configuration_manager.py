@@ -20,7 +20,6 @@ class configuration_manager():
 
     def register_keybind(self, value):
         key, name = value.split(None, 1)
-        print(f"{key} {name}")
         self.game.io.register_keybind(name, key)
 
     def get_int(self, name):
