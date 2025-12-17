@@ -1,6 +1,5 @@
 from constants import (
     BACKGROUND_COLOR,
-    DEBUG_ENABLED,
     RENDER_UI
 )
 from pygame import draw as render, \
@@ -17,7 +16,7 @@ class render_manager():
         self.render_queue.append(polygon)
 
     def draw(self):
-        if not DEBUG_ENABLED:
+        if not self.game.config.get_bool("debug"):
             self.game.screen.fill(BACKGROUND_COLOR)
         self.game.entities.draw()
         for pol in self.render_queue:

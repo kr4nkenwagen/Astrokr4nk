@@ -1,4 +1,3 @@
-from constants import DEBUG_ENABLED
 from pygame import Vector2, \
     draw
 from math import degrees, \
@@ -125,7 +124,7 @@ class collision_manager():
                         cur.angular_velocity * dt,
                         cur.position
                     )
-                    if DEBUG_ENABLED:
+                    if self.game.config.get_bool("debug"):
                         draw.polygon(self.game.screen, "red", cur_future_poly, 2)
                         draw.polygon(self.game.screen, "blue", ent_future_poly, 2)
                     collides, normal, depth = self.polygons_collide(

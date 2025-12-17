@@ -96,7 +96,6 @@ UI_SCORE_BAR_BOUNCE_DURATION = .35
 
 LEVEL_LIMIT = 10
 
-DEBUG_ENABLED = False
 RENDER_UI = True
 
 FONT_REGULAR = "resources/fonts/1.ttf"

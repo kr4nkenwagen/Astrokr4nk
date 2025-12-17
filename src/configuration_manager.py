@@ -24,3 +24,9 @@ class configuration_manager():
 
     def get_int(self, name):
         return int(self.config[name][0])
+
+    def get_float(self, name):
+        return float(self.config[name][0])
+
+    def get_bool(self, name):
+        return True if self.config[name] is "true" else False

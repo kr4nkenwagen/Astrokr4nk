@@ -5,10 +5,7 @@ from entity_manager import entity_manager
 from render_manager import render_manager
 from configuration_manager import configuration_manager
 from input_manager import input_manager
-from constants import (
-    DEBUG_ENABLED,
-    BACKGROUND_COLOR
-)
+from constants import BACKGROUND_COLOR
 from pygame import (
     init,
     display,
@@ -49,7 +46,7 @@ class game():
         self.game_running = True
 
     def update(self):
-        if DEBUG_ENABLED:
+        if self.config.get_bool("debug"):
             self.screen.fill(BACKGROUND_COLOR)
         if self.io.is_released("exit"):
             self.game_paused = not self.game_paused
