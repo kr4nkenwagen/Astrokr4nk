@@ -1,4 +1,4 @@
-from entity import entity
+from energy_component import energy_component
 from pygame import Vector2
 from player_shield_polygon import player_shield_polygon
 from constants import PLAYER_RADIUS, \
@@ -10,7 +10,7 @@ from constants import PLAYER_RADIUS, \
     PLAYER_SHIELD_COOLDOWN
 
 
-class player_shield(entity):
+class player_shield(energy_component):
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_SHIELD_RADIUS)

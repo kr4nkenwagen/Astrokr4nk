@@ -1,8 +1,8 @@
-from entity import entity
+from energy_component import energy_component
 from player_thrust_polygon import player_thrust_polygon
 
 
-class player_thrust_representation(entity):
+class player_thrust_representation(energy_component):
     show = False
 
     def __init__(self, x, y, radius):

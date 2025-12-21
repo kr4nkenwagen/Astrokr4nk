@@ -5,6 +5,7 @@ from ui_level import ui_level
 from ui_shield import ui_shield
 from ui_speedometer import ui_speedometer
 from ui_score_numbers import ui_score_numbers
+from ui_energy import ui_energy
 
 
 class ui(entity):
@@ -20,4 +21,5 @@ class ui(entity):
             self.game.entities.add_entity(ui_speedometer())
             self.game.entities.add_entity(ui_game_over())
             self.game.entities.add_entity(ui_score_numbers())
+            self.game.entities.add_entity(ui_energy())
             self.initialized = True

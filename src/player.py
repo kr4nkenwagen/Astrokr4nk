@@ -2,7 +2,6 @@ from constants import (
     LEVEL_LIMIT,
     PLAYER_ACCELERATION,
     PLAYER_DEACCELERATION,
-    PLAYER_FIRE_RATE,
     PLAYER_MAX_SPEED,
     PLAYER_RADIUS,
     PLAYER_TURN_SPEED,
@@ -10,19 +9,23 @@ from constants import (
     SCREEN_DEACCELERATION,
     SCREEN_OFFSET_LIMIT
 )
+from energy_component_master import energy_component_master
 from entity import entity
+import game
 from player_polygon import player_polygon
-from player_shot import player_shot
+from laser import laser
 from player_thrust_representation import player_thrust_representation
 from player_shield import player_shield
+from player_laser import player_laser
 from pygame import Vector2
 
 
 class player(entity):
     thrust_representation = None
     shield_representation = None
+    laser_representation = None
+    energy_master = None
     camera_offset = Vector2(0, 0)
-    player_fire_rate_counter = 0
     player_dead = False
 
     def __init__(self, x, y):
@@ -72,39 +75,25 @@ class player(entity):
         self.position = self.camera_offset + \
             Vector2(self.game.screen_width // 2, self.game.screen_height // 2)
 
+    def init(self):
+        self.thrust_representation = self.game.entities.add_entity(
+            player_thrust_representation(self.position.x,
+                                        self.position.y,
+                                        10))
+        self.shield_representation = self.game.entities.add_entity(player_shield( self.position.x, self.position.y))
+        self.thrust_representation.parent = self
+        self.laser_representation = self.game.entities.add_entity(player_laser())
+        self.energy_master = self.game.entities.add_entity(energy_component_master(self.laser_representation, self.shield_representation, self.thrust_representation))
+
     def update(self):
-        if self.thrust_representation is None:
-            self.thrust_representation = self.game.entities.add_entity(
-                player_thrust_representation(self.position.x,
-                                             self.position.y,
-                                             10))
-            self.shield_representation = self.game.entities.add_entity(player_shield( self.position.x, self.position.y))
-            self.thrust_representation.parent = self
         self.rotate()
         self.move()
-        if self.game.io.is_down("shoot"):
-            self.shoot()
-        self.reload()
         if self.score > LEVEL_LIMIT:
             self.score = 0
             self.level += 1
         if self.shield_representation != None:
             self.shield_representation.position.x = self.position.x
             self.shield_representation.position.y = self.position.y
-
-    def shoot(self):
-        if self.player_fire_rate_counter > 0:
-            return
-        origin = self.position + self.forward() * (self.radius + 10)
-        self.game.entities.add_entity(
-            player_shot(origin.x, origin.y, self.rotation))
-        self.player_fire_rate_counter += self.game.dt
-
-    def reload(self):
-        if self.player_fire_rate_counter > 0:
-            self.player_fire_rate_counter += self.game.dt
-            if self.player_fire_rate_counter > PLAYER_FIRE_RATE:
-                self.player_fire_rate_counter = 0
 
     def on_collision_enter(self, entity, collision_point):
         self.game.game_paused = True

@@ -2,6 +2,10 @@ keybind w up
 keybind s down
 keybind a left
 keybind d right
+keybind 1 energy_weapon
+keybind 2 energy_shield
+keybind 3 energy_thruster
+keybind right_shift energy_remove
 keybind space shoot
 keybind return enter
 keybind escape exit

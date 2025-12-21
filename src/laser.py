@@ -2,12 +2,12 @@ from constants import LASER_LIFETIME, \
     LASER_MAX_LENGTH, \
     LASER_AIM_ASSIST_DEGREE
 from asteroid_explosion import asteroid_explosion
-from entity import entity
+from energy_component import energy_component
 from player_shot_polygon import player_shot_polygon
 from pygame import Vector2
 
 
-class player_shot(entity):
+class laser(energy_component):
     def __init__(self, x, y, rotation):
         super().__init__(x, y, 1)
         self.rotation = rotation
