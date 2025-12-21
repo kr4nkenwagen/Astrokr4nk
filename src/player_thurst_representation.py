@@ -10,4 +10,9 @@ class player_thrust_representation(entity):
         self.polygon = player_thrust_polygon()
 
     def update(self):
+        if self.show:
+            self.game.audio.play("thrust")
+        else:
+            self.game.audio.stop("thrust")
+
         self.polygon.enabled = self.show

@@ -59,6 +59,7 @@ class asteroid(entity):
         self.velocity = velocity.normalize() * self.velocity.length()
 
     def on_destroy(self):
+        self.game.audio.play("asteroid_explosion")
         if not self.destroyed_by_player:
             return
         self.player.score += SCORE_MULTIPLIER / self.max_radius

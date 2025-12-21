@@ -8,3 +8,4 @@ keybind escape exit
 width 1280
 height 720
 debug true
+volume .1
