@@ -19,12 +19,12 @@ class audio_manager():
         }
 
     def play(self, name, volume=1, loop=False):
+        if loop and self.is_playing(name):
+            return
         sound = self.sounds.get(name)
         if not sound:
             return
-
-        sound.set_volume(self.game.config.get_float("volume") * volume)
-
+        sound.set_volume(clamp_audio((self.game.config.get_float("volume") * volume)))
         channel = mixer.find_channel()
         if channel:
             loops = -1 if loop else 0
@@ -39,12 +39,17 @@ class audio_manager():
 
     def is_playing(self, name):
         channel = self.active_channels.get(name)
-        return True if channel else False
+        if not channel:
+            return False
+        if channel.get_busy():
+            return True
+        del self.active_channels[name]
+        return False
 
     def set_channel_audio(self, name, volume):
         channel = self.active_channels.get(name)
         if channel:
-            channel.set_volume(self.game.config.get_float("volume") * volume)
+            channel.set_volume(clamp_audio(self.game.config.get_float("volume") * volume))
 
-
-
+def clamp_audio(volume):
+    return max(0.0, min(1.0, volume))

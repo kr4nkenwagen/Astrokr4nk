@@ -16,8 +16,6 @@ class player_thrust_representation(entity):
                 self.game.audio.play("thrust", self.max_radius / self.radius, True)
             else:
                 self.game.audio.set_channel_audio("thrust", self.max_radius / self.radius)
-                print(self.max_radius / self.radius)
         else:
             self.game.audio.stop("thrust")
-
         self.polygon.enabled = self.show
