@@ -13,7 +13,7 @@ from constants import (
 from entity import entity
 from player_polygon import player_polygon
 from player_shot import player_shot
-from player_thurst_representation import player_thrust_representation
+from player_thrust_representation import player_thrust_representation
 from player_shield import player_shield
 from pygame import Vector2
 
