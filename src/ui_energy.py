@@ -2,6 +2,8 @@ from constants import (
     UI_COLOR,
     UI_DISABLED_COLOR,
     FONT_BOLD,
+    UI_ENERGY_BOX_SIZE,
+    UI_ENERGY_BOX_SPACING,
     UI_ENERGY_POP_TIME,
     UI_ENERGY_POP_SCALE
 )
@@ -19,9 +21,9 @@ class ui_energy(entity):
         self.shield = None
         self.thrust = None
         self.master = None
-        self.box_size = 30
-        self.box_spacing = 6
-        self.row_spacing = 40
+        self.box_size = UI_ENERGY_BOX_SIZE
+        self.box_spacing = UI_ENERGY_BOX_SPACING
+        self.row_spacing = UI_ENERGY_BOX_SPACING + UI_ENERGY_BOX_SIZE
         self.color = Color(UI_COLOR)
         self.disabled_color = Color(UI_DISABLED_COLOR)
         self.is_ui = True
