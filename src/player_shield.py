@@ -58,6 +58,7 @@ class player_shield(energy_component):
                 self.recharge_timer += dt
                 if self.recharge_timer >= PLAYER_SHIELD_RECHARGE_TIME:
                     self.recharge_timer = 0
+                    self.game.audio.play("shield_activate")
                     self.value = PLAYER_SHIELD_MAX
 
     def on_physics_enter(self, entity):
@@ -71,6 +72,8 @@ class player_shield(energy_component):
 
     def on_physics(self, entity):
         if self.value > 0:
+            self.recharge_timer = 0
+            self.game.audio.play("shield_hit")
             direction = entity.position - self.position
             direction = Vector2.normalize(direction)
             self.polygon.ripple_direction.append(direction)

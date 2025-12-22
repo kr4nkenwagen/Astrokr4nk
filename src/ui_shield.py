@@ -22,6 +22,7 @@ class ui_shield(entity):
         self.shield= None
         self.frame = Rect(0, 0, PLAYER_SHIELD_RADIUS * 2, 5)
         self.value = Rect(0, 0, 0, 5)
+        self.charge = Rect(0, 0, 0, 5)
         self.prev_shield_value = None
         self.damage_shake_timer = 0
         self.color = Color(UI_COLOR)
@@ -46,9 +47,17 @@ class ui_shield(entity):
         self.frame.y = base_y
         self.value.x = base_x
         self.value.y = base_y
+        self.charge.x = base_x
+        self.charge.y = base_y
         if self.shield.value > 0:
             self.color = Color(UI_COLOR)
             self.value.width = (self.shield.value / PLAYER_SHIELD_MAX) * self.frame.width
+            recharge_progress = self.shield.recharge_timer / PLAYER_SHIELD_RECHARGE_TIME
+            if recharge_progress > 0:
+                self.charge.width = recharge_progress * (self.frame.width - self.value.width)
+                self.charge.x += self.value.width
+            else:
+                self.charge.width = 0
         else:
             self.color = Color(UI_DISABLED_COLOR)
             recharge_progress = self.shield.recharge_timer / PLAYER_SHIELD_RECHARGE_TIME
@@ -58,6 +67,8 @@ class ui_shield(entity):
             shake_y = random.uniform(-shake_amount, shake_amount)
             self.frame.x += shake_x
             self.frame.y += shake_y
+            self.charge.x += shake_x
+            self.charge.y += shake_y
             self.value.x += shake_x
             self.value.y += shake_y
             shake_x = shake_y = 0
@@ -71,24 +82,27 @@ class ui_shield(entity):
             shake_y = random.uniform(-shake_strength, shake_strength)
             self.frame.x += shake_x
             self.frame.y += shake_y
+            self.charge.x += shake_x
+            self.charge.y += shake_y
             self.value.x += shake_x
             self.value.y += shake_y
 
     def draw(self):
         if self.shield.player.player_dead or self.shield.get_energy() == 0:
             return
-        render.polygon(self.game.screen,
-                       self.color,
-                       [
-                           Vector2(self.frame.x, self.frame.y),
-                           Vector2(self.frame.x + self.frame.width,
-                                   self.frame.y),
-                           Vector2(self.frame.x + self.frame.width,
-                                   self.frame.y + self.frame.height),
-                           Vector2(self.frame.x,
-                                   self.frame.y + self.frame.height)
-                       ],
-                       1)
+        if self.charge.width > 0:
+            render.polygon(self.game.screen,
+                Color(UI_DISABLED_COLOR),
+                [
+                    Vector2(self.charge.x, self.charge.y),
+                    Vector2(self.charge.x + self.charge.width,
+                            self.charge.y),
+                    Vector2(self.charge.x + self.charge.width,
+                            self.charge.y + self.charge.height),
+                    Vector2(self.charge.x,
+                            self.charge.y + self.charge.height)
+                ],
+                0)
         render.polygon(self.game.screen,
                        self.color,
                        [
@@ -101,4 +115,15 @@ class ui_shield(entity):
                                    self.value.y + self.value.height)
                        ],
                        0)
-
+        render.polygon(self.game.screen,
+                       self.color,
+                       [
+                           Vector2(self.frame.x, self.frame.y),
+                           Vector2(self.frame.x + self.frame.width,
+                                   self.frame.y),
+                           Vector2(self.frame.x + self.frame.width,
+                                   self.frame.y + self.frame.height),
+                           Vector2(self.frame.x,
+                                   self.frame.y + self.frame.height)
+                       ],
+                       1)
