@@ -27,11 +27,11 @@ class ui_shield(entity):
         self.color = Color(UI_COLOR)
         self.is_ui = True
 
+    def init(self):
+        self.shield = self.game.entities.get_entity("player_shield")
+
     def update(self):
-        if self.shield is None:
-            self.shield = self.game.entities.get_entity("player_shield")
-            return
-        if self.shield.player.player_dead:
+        if self.shield.player.player_dead or self.shield.get_energy() == 0:
             return
         if self.prev_shield_value is None:
             self.prev_shield_value = self.shield.value
@@ -75,7 +75,7 @@ class ui_shield(entity):
             self.value.y += shake_y
 
     def draw(self):
-        if self.shield.player.player_dead:
+        if self.shield.player.player_dead or self.shield.get_energy() == 0:
             return
         render.polygon(self.game.screen,
                        self.color,

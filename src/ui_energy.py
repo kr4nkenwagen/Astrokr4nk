@@ -1,7 +1,12 @@
-
-from constants import UI_COLOR, UI_DISABLED_COLOR
+from constants import (
+    UI_COLOR,
+    UI_DISABLED_COLOR,
+    FONT_BOLD,
+    FONT_SIZE
+)
 from entity import entity
-from pygame import Rect, Color, draw as render
+from pygame import Rect, Color, draw as render, Vector2
+from pygame.font import Font
 
 
 POP_TIME = 0.12
@@ -15,10 +20,11 @@ class ui_energy(entity):
         self.weapon = None
         self.shield = None
         self.thrust = None
+        self.master = None
 
         self.box_size = 30
-        self.box_spacing = 2
-        self.row_spacing = 32
+        self.box_spacing = 6
+        self.row_spacing = 40
 
         self.color = Color(UI_COLOR)
         self.disabled_color = Color(UI_DISABLED_COLOR)
@@ -32,6 +38,9 @@ class ui_energy(entity):
         self.weapon = self.game.entities.get_entity("player_laser")
         self.shield = self.game.entities.get_entity("player_shield")
         self.thrust = self.game.entities.get_entity("player_thrust_representation")
+        self.master = self.game.entities.get_entity("energy_component_master")
+
+        self.font = Font(FONT_BOLD, self.box_size)
 
         for comp in (self.weapon, self.shield, self.thrust):
             self.prev_energy[comp] = comp.get_energy()
@@ -52,6 +61,12 @@ class ui_energy(entity):
         self._build_row("W", self.weapon, base_y)
         self._build_row("S", self.shield, base_y + self.row_spacing)
         self._build_row("T", self.thrust, base_y + self.row_spacing * 2)
+        self._build_unused_row(
+            "U",
+            self.master.get_available_energy(),
+            self.master.max_energy,
+            base_y + self.row_spacing * 3
+        )
 
     def _update_component(self, comp):
         current = comp.get_energy()
@@ -75,22 +90,36 @@ class ui_energy(entity):
         energy = energy_component.get_energy()
 
         for i in range(energy_component.max_energy):
-            x = 40 + i * (self.box_size + self.box_spacing)
+            x = 60 + i * (self.box_size + self.box_spacing)
             rect = Rect(x, y, self.box_size, self.box_size)
             filled = i < energy
             pop = self.pop_timers[energy_component][i]
             boxes.append((rect, filled, pop))
 
-        self.rows.append((label, boxes))
+        text = self.font.render(label, True, UI_COLOR)
+        self.rows.append((text, Vector2(20, y), boxes))
+
+    def _build_unused_row(self, label, energy, max_energy, y):
+        boxes = []
+
+        for i in range(max_energy):
+            x = 60 + i * (self.box_size + self.box_spacing)
+            rect = Rect(x, y, self.box_size, self.box_size)
+            filled = i < energy
+            boxes.append((rect, filled, 0))
+
+        text = self.font.render(label, True, UI_COLOR)
+        self.rows.append((text, Vector2(20, y), boxes))
 
     def draw(self):
         if self.shield.player.player_dead:
             return
 
-        for label, boxes in self.rows:
+        for text, text_pos, boxes in self.rows:
+            self.game.screen.blit(text, text_pos)
+
             for rect, filled, pop in boxes:
                 scale = 1.0
-
                 if pop > 0:
                     t = pop / POP_TIME
                     scale = 1.0 + (POP_SCALE - 1.0) * t
@@ -105,7 +134,6 @@ class ui_energy(entity):
                 )
 
                 color = self.color if filled else self.disabled_color
-
                 render.rect(self.game.screen, color, r, 0)
                 render.rect(self.game.screen, self.color, r, 1)
 

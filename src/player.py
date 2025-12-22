@@ -46,34 +46,6 @@ class player(entity):
             direction -= 1
         self.rotation += direction * PLAYER_TURN_SPEED * self.game.dt
 
-    def accelerate(self):
-        self.thrust_representation.show = True
-        self.velocity = self.velocity.lerp(
-            self.forward() *
-            PLAYER_MAX_SPEED, PLAYER_ACCELERATION / PLAYER_MAX_SPEED * self.game.dt)
-        if self.camera_offset.length() < SCREEN_OFFSET_LIMIT:
-            self.camera_offset = self.camera_offset.lerp(self.forward() *
-                                                         SCREEN_OFFSET_LIMIT,
-                                                         SCREEN_ACCELERATION *
-                                                         self.game.dt /
-                                                         SCREEN_OFFSET_LIMIT)
-
-    def deaccelerate(self):
-        self.thrust_representation.show = False
-        self.velocity = self.velocity.lerp(Vector2(
-            0, 0), PLAYER_DEACCELERATION / PLAYER_MAX_SPEED * self.game.dt)
-        if self.camera_offset.length() != 0:
-            self.camera_offset = self.camera_offset.lerp(Vector2(0, 0),
-                                                         min(
-                (SCREEN_DEACCELERATION * self.game.dt) / self.camera_offset.length(), 1))
-
-    def move(self):
-        if self.game.io.is_down("up"):
-            self.accelerate()
-        else:
-            self.deaccelerate()
-        self.position = self.camera_offset + \
-            Vector2(self.game.screen_width // 2, self.game.screen_height // 2)
 
     def init(self):
         self.thrust_representation = self.game.entities.add_entity(
@@ -87,7 +59,6 @@ class player(entity):
 
     def update(self):
         self.rotate()
-        self.move()
         if self.score > LEVEL_LIMIT:
             self.score = 0
             self.level += 1

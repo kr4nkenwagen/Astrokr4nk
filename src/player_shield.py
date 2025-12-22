@@ -28,9 +28,10 @@ class player_shield(energy_component):
             self.player = self.game.entities.get_entity("player")
         self.velocity = self.player.velocity
         self.position = self.player.position
+        self.recharge_shield(self.game.dt)
         if self.value < 0:
             self.valu = 0
-        if self.value == 0:
+        if self.value == 0 or self.get_energy() == 0:
             if self.radius <= PLAYER_RADIUS:
                 self.polygon.show = False
             else:
@@ -38,7 +39,6 @@ class player_shield(energy_component):
             self.collideable = False
             self.use_physics = False
             self.player.collideable = True
-            self.recharge_shield(self.game.dt)
         else:
             self.polygon.show = True
             self.collideable = True
@@ -53,10 +53,11 @@ class player_shield(energy_component):
                 timer["timer"] -= self.game.dt
 
     def recharge_shield(self, dt):
-        if self.value == 0:
+        if (self.value == 0 and self.get_energy() > 1) or self.get_energy() >= 3:
             if self.recharge_timer < PLAYER_SHIELD_RECHARGE_TIME:
                 self.recharge_timer += dt
                 if self.recharge_timer >= PLAYER_SHIELD_RECHARGE_TIME:
+                    self.recharge_timer = 0
                     self.value = PLAYER_SHIELD_MAX
 
     def on_physics_enter(self, entity):

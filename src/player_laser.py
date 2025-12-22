@@ -12,7 +12,7 @@ class player_laser(energy_component):
         self.player = self.game.entities.get_entity("player")
 
     def update(self):
-        if self.game.io.is_down("shoot"):
+        if self.game.io.is_down("shoot") and self.get_energy() > 0:
             self.shoot()
         self.reload()
 
@@ -27,7 +27,7 @@ class player_laser(energy_component):
     def reload(self):
         if self.player_fire_rate_counter > 0:
             self.player_fire_rate_counter += self.game.dt
-            if self.player_fire_rate_counter > PLAYER_FIRE_RATE:
+            if self.player_fire_rate_counter > PLAYER_FIRE_RATE / self.get_energy():
                 self.player_fire_rate_counter = 0
 
 

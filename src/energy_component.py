@@ -11,7 +11,7 @@ class energy_component(entity):
     def remove_energy(self):
         if self.current_energy_count <= 0:
             return
-        self.current_energy_count -= 0
+        self.current_energy_count -= 1
 
     def get_energy(self):
         return self.current_energy_count
