@@ -55,7 +55,7 @@ class player_shield(energy_component):
     def recharge_shield(self, dt):
         if (self.value == 0 and self.get_energy() > 1) or self.get_energy() >= 3:
             if self.recharge_timer < PLAYER_SHIELD_RECHARGE_TIME:
-                self.recharge_timer += dt
+                self.recharge_timer += dt / 2 if self.value > 0 else dt
                 if self.recharge_timer >= PLAYER_SHIELD_RECHARGE_TIME:
                     self.recharge_timer = 0
                     self.game.audio.play("shield_activate")
