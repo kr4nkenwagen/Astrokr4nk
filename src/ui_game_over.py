@@ -21,12 +21,12 @@ class ui_game_over(entity):
         self.desc = None
         self.player = self.game.entities.get_entity("player")
         self.header = self.header_font.render("GAME OVER", True, UI_COLOR)
-        self.desc = self.desc_font.render("Press any key to try again!", True, UI_COLOR)
+        self.desc = self.desc_font.render("Press <space> to try again!", True, UI_COLOR)
 
     def draw(self):
         if not self.player.player_dead:
             return
-        if self.game.io.is_released("shoot"):
+        if self.game.io.is_released("space"):
             self.game.game_paused = False
             self.game.rooms.load_room("main_room")
         self.game.screen.blit(self.header,

@@ -7,6 +7,7 @@ keybind 2 energy_shield
 keybind 3 energy_thruster
 keybind right_shift energy_remove
 keybind space shoot
+keybind space space
 keybind return enter
 keybind escape exit
 width 1280
