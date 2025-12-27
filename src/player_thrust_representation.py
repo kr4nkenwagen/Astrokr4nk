@@ -6,6 +6,7 @@ from constants import (
     SCREEN_ACCELERATION,
     SCREEN_DEACCELERATION
 )
+from player_side_thruster import player_side_thruster
 from energy_component import energy_component
 from pygame import Vector2
 from player_thrust_polygon import player_thrust_polygon
@@ -23,6 +24,8 @@ class player_thrust_representation(energy_component):
     def init(self):
         self.player = self.game.entities.get_entity("player")
         self.polygon.enabled = self.show
+        self.game.entities.add_entity(player_side_thruster("left", self.player))
+        self.game.entities.add_entity(player_side_thruster("right", self.player))
 
     def update(self):
         if self.show:
