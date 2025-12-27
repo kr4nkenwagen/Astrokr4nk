@@ -26,6 +26,9 @@ class ui_game_over(entity):
     def draw(self):
         if not self.player.player_dead:
             return
+        if self.game.io.is_released("shoot"):
+            self.game.game_paused = False
+            self.game.rooms.load_room("main_room")
         self.game.screen.blit(self.header,
                               self.header_position)
         self.game.screen.blit(self.desc,

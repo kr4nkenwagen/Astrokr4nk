@@ -133,6 +133,8 @@ class entity_manager:
     def get_entity(self, name):
         curr_ent = self.first_entity
         while type(curr_ent).__name__ != name:
+            if curr_ent is None:
+                return None
             curr_ent = curr_ent.next
         return curr_ent
 

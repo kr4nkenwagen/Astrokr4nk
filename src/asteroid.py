@@ -26,7 +26,7 @@ class asteroid(entity):
         self.angular_velocity = randint(-ASTEROID_MAX_ROTATION_SPEED,
                                         ASTEROID_MAX_ROTATION_SPEED)
         self.use_physics = True
-        self.destroyed_by_player = True
+        self.destroyed_by_player = False
         self.rotation_speed = 0
         self.life_timer = 0
 
@@ -59,9 +59,9 @@ class asteroid(entity):
         self.velocity = velocity.normalize() * self.velocity.length()
 
     def on_destroy(self):
-        self.game.audio.play("asteroid_explosion")
         if not self.destroyed_by_player:
             return
+        self.game.audio.play("asteroid_explosion")
         self.player.score += SCORE_MULTIPLIER / self.max_radius
         self.game.entities.get_entity("ui_score_numbers").create_score_text(SCORE_MULTIPLIER / self.max_radius, self.position)
         if self.max_radius < ASTEROID_MIN_RADIUS + ASTEROID_MIN_RADIUS_SPAN:
