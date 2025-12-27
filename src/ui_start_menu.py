@@ -49,7 +49,7 @@ class ui_start_menu(entity):
                 self.selected_index + 1,
                 len(self.menu_options) - 1
             )
-        if self.game.io.is_released("shoot"):
+        if self.game.io.is_released("space"):
             dest = self.menu_options[self.selected_index]["destination"]
             if dest == "exit":
                 self.game.game_running = False
