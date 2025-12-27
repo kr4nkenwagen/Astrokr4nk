@@ -5,6 +5,7 @@ keybind d right
 keybind 1 energy_weapon
 keybind 2 energy_shield
 keybind 3 energy_thruster
+keybind 4 energy_even
 keybind right_shift energy_remove
 keybind space shoot
 keybind space space

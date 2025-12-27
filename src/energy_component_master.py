@@ -24,6 +24,21 @@ class energy_component_master(entity):
                 self.remove_energy((self.thrust))
             else:
                 self.add_energy(self.thrust)
+        if self.game.io.is_released("energy_even"):
+            self.evenly_distribute_energy()
+
+    def evenly_distribute_energy(self):
+        energy = self.max_energy // 3
+        while self.weapon.current_energy_count > 0:
+            self.remove_energy(self.weapon)
+        while self.shield.current_energy_count > 0:
+            self.remove_energy(self.shield)
+        while self.thrust.current_energy_count > 0:
+            self.remove_energy(self.thrust)
+        for _ in range(energy):
+            self.add_energy(self.weapon)
+            self.add_energy(self.shield)
+            self.add_energy(self.thrust)
 
 
 
